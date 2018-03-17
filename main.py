@@ -9,10 +9,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import psutil
 import os
+import threading
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
+import mp3Player
+from mutagen.mp3 import MP3
+
+mp3Player = mp3Player.mp3Player()
 
 
 class Ui_MainWindow(object):
@@ -373,7 +378,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.horizontalSlider.setFont(font)
-        self.horizontalSlider.setMaximum(500)
+        self.horizontalSlider.setMaximum(1000)
         self.horizontalSlider.setSingleStep(1)
         self.horizontalSlider.setSliderPosition(0)
         self.horizontalSlider.setTracking(True)
@@ -445,30 +450,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuView_2.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        self.tableWidget.cellClicked.connect(self.Mediaplayer)
-        self.tableWidget.cellClicked.connect(self.Delete)
-        self.tableWidget.cellClicked.connect(self.Copy)
-        self.tableWidget.cellClicked.connect(self.Cut)
-        self.tableWidget.cellClicked.connect(self.Zip)
-        self.comboBox_2.currentIndexChanged.connect(self.setDisabledDelete)
-        self.comboBox_2.currentIndexChanged.connect(self.setDisabledCopy)
-        self.comboBox_2.currentIndexChanged.connect(self.setDisabledCut)
-        self.comboBox_2.currentIndexChanged.connect(self.setmediaPlayerDis)
-        self.comboBox_2.currentIndexChanged.connect(self.setDisZip)
-        self.comboBox_2.currentTextChanged.connect(self.setDisabledDelete)
-        self.comboBox_2.currentTextChanged.connect(self.setDisabledCopy)
-        self.comboBox_2.currentTextChanged.connect(self.setDisabledCut)
-        self.comboBox_2.currentTextChanged.connect(self.setmediaPlayerDis)
-        self.comboBox_2.currentTextChanged.connect(self.setDisZip)
-        self.toolButton_3.clicked.connect(self.DeleteItems)
-        self.toolButton_4.clicked.connect(self.CopyItems)
-        self.toolButton_13.clicked.connect(self.PasteItem)
-        self.toolButton_5.clicked.connect(self.CutItems)
-        self.toolButton_6.clicked.connect(self.ZipItems)
-        self.toolButton.clicked.connect(self.NewDir)
-        self.toolButton_12.clicked.connect(self.Refresh)
         self.toolButton_14 = QtWidgets.QToolButton(self.groupBox)
         self.toolButton_14.setGeometry(QtCore.QRect(110, 20, 41, 41))
         self.toolButton_14.setText("")
@@ -526,6 +507,35 @@ class Ui_MainWindow(object):
         self.textBrowser.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.textBrowser.setObjectName("textBrowser")
         self.textBrowser.setText('Image Preview')
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.tableWidget.cellClicked.connect(self.Mediaplayer)
+        self.tableWidget.cellClicked.connect(self.Delete)
+        self.tableWidget.cellClicked.connect(self.Copy)
+        self.tableWidget.cellClicked.connect(self.Cut)
+        self.tableWidget.cellClicked.connect(self.Zip)
+        self.comboBox_2.currentIndexChanged.connect(self.setDisabledDelete)
+        self.comboBox_2.currentIndexChanged.connect(self.setDisabledCopy)
+        self.comboBox_2.currentIndexChanged.connect(self.setDisabledCut)
+        self.comboBox_2.currentIndexChanged.connect(self.setmediaPlayerDis)
+        self.comboBox_2.currentIndexChanged.connect(self.setDisZip)
+        self.comboBox_2.currentTextChanged.connect(self.setDisabledDelete)
+        self.comboBox_2.currentTextChanged.connect(self.setDisabledCopy)
+        self.comboBox_2.currentTextChanged.connect(self.setDisabledCut)
+        self.comboBox_2.currentTextChanged.connect(self.setmediaPlayerDis)
+        self.comboBox_2.currentTextChanged.connect(self.setDisZip)
+        self.toolButton_3.clicked.connect(self.DeleteItems)
+        self.toolButton_4.clicked.connect(self.CopyItems)
+        self.toolButton_13.clicked.connect(self.PasteItem)
+        self.toolButton_5.clicked.connect(self.CutItems)
+        self.toolButton_6.clicked.connect(self.ZipItems)
+        self.toolButton.clicked.connect(self.NewDir)
+        self.toolButton_12.clicked.connect(self.Refresh)
+        self.toolButton_10.clicked.connect(self.playButton)
+        self.toolButton_11.clicked.connect(self.pauseButton)
+        self.toolButton_15.clicked.connect(self.nextButton)
+        self.toolButton_14.clicked.connect(self.previousButton)
 
         # self.label_2.setPixmap(QtGui.QPixmap("../../../../Users/m.reza/Desktop/series_1_ap/ui icons/blank-file.png"))
 
@@ -801,6 +811,13 @@ class Ui_MainWindow(object):
                 # self.comboBox_2.addItem(self.path)
                 # self.comboBox_2.setCurrentText(self.path)
 
+        self.pathMusics = []
+        self.currentpathmusic = self.comboBox_2.currentText()
+        self.listmusic = os.listdir(self.currentpathmusic)
+        for i in range(len(self.listmusic)):
+            if self.listmusic[i].endswith('.mp3'):
+                self.pathMusics.append(self.currentpathmusic + self.listmusic[i])
+
     def Mediaplayer(self):
         self.clickeditem = self.tableWidget.currentItem()
         if not self.clickeditem:
@@ -819,6 +836,35 @@ class Ui_MainWindow(object):
         if self.groupBox.setDisabled:
             self.musicpath += self.musicname
             print(self.musicpath)
+
+    def playButton(self):
+        if mp3Player.playList == self.pathMusics and not mp3Player.playing:
+            mp3Player.play()
+        elif mp3Player.playList == self.pathMusics and mp3Player.playing:
+            mp3Player.pause()
+            mp3Player.jumpInPlayList(self.musicpath)
+        elif mp3Player.playList != self.pathMusics:
+            mp3Player.pause()
+            mp3Player.clearPlayList()
+            mp3Player.playList = self.pathMusics
+            mp3Player.jumpInPlayList(self.musicpath)
+        self.movingSlider = threading.Thread(target=self.moveSlider)
+        self.movingSlider.start()
+    def pauseButton(self):
+        mp3Player.pause()
+
+    def nextButton(self):
+        mp3Player.next()
+
+    def previousButton(self):
+        mp3Player.previous()
+
+    def moveSlider(self):
+        self.musicDuration = MP3(mp3Player.playList[mp3Player.n]).info.length
+        while (mp3Player.player.time != self.musicDuration):
+            self.horizontalSlider.setSliderPosition(round((mp3Player.player.time / self.musicDuration) * 1000))
+        else:
+            print("exit")
 
     def setmediaPlayerDis(self):
         self.groupBox.setDisabled(True)
@@ -1015,4 +1061,10 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
+    if app.exec_()==0:
+        mp3Player.seek(ui.musicDuration)
+        ui.movingSlider._is_stopped = True
+        ui.movingSlider._tstate_lock = None
+
     sys.exit(app.exec_())
+
