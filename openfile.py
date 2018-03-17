@@ -7,23 +7,23 @@ import glob
 class openfile:
     def __init__(self, paths):
         self.paths = paths
-    def openimage(paths):
-        img = Image.open(paths)
+    def openimage(self):
+        img = Image.open(self.paths)
         img.show()
 
-    def opentext(paths):
+    def opentext(self):
         programName = "notepad.exe"
-        sp.Popen([programName, paths])
+        sp.Popen([programName, self.paths])
 
 
-    def video_music_player(paths):
-        startfile(paths)
+    def video_music_player(self):
+        startfile(self.paths)
 
 
-    def openpdf(paths):
-        sp.Popen([paths],shell=True)
+    def openpdf(self):
+        sp.Popen([self.paths],shell=True)
 
 
-    def runfile(paths):
-        os.startfile(paths)
+    def runfile(self):
+        os.startfile(self.paths)
 
