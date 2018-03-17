@@ -863,8 +863,6 @@ class Ui_MainWindow(object):
         self.musicDuration = MP3(mp3Player.playList[mp3Player.n]).info.length
         while (mp3Player.player.time != self.musicDuration):
             self.horizontalSlider.setSliderPosition(round((mp3Player.player.time / self.musicDuration) * 1000))
-        else:
-            print("exit")
 
     def setmediaPlayerDis(self):
         self.groupBox.setDisabled(True)
@@ -1063,8 +1061,8 @@ if __name__ == "__main__":
     MainWindow.show()
     if app.exec_()==0:
         mp3Player.seek(ui.musicDuration)
-        ui.movingSlider._is_stopped = True
-        ui.movingSlider._tstate_lock = None
+        '''ui.movingSlider._is_stopped = True
+        ui.movingSlider._tstate_lock = None'''
 
     sys.exit(app.exec_())
 
