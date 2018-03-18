@@ -626,6 +626,11 @@ class Ui_MainWindow(object):
         self.msg.setWindowTitle("Something went wrong!")
         self.msg.setStandardButtons(QMessageBox.Ok)
 
+        self.msg_1 = QMessageBox()
+        self.msg_1.setIcon(QMessageBox.Information)
+        self.msg_1.setText("Directory Error")
+        self.msg_1.setWindowTitle("Something went wrong!")
+        self.msg_1.setStandardButtons(QMessageBox.Ok)
     def selectionchange(self, i):
         _translate = QtCore.QCoreApplication.translate
 
@@ -728,6 +733,9 @@ class Ui_MainWindow(object):
                 self.lisrdir = os.listdir(self.path)
             except PermissionError:
                 self.msg.exec_()
+                self.path = self.comboBox_2.currentText()
+            except NotADirectoryError:
+                self.msg_1.exec_()
                 self.path = self.comboBox_2.currentText()
             self.num = self.comboBox_2.currentIndex()
             self.comboBox_2.setItemText(self.num, self.path)
