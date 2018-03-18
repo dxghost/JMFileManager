@@ -820,7 +820,8 @@ class Ui_MainWindow(object):
 
     def Mediaplayer(self):
         self.clickeditem = self.tableWidget.currentItem()
-        if not self.clickeditem:
+        if not self.clickeditem and not mp3Player.playing and not mp3Player.paused:
+            print(1,mp3Player.paused)
             self.groupBox.setDisabled(True)
             return None
 
@@ -829,7 +830,8 @@ class Ui_MainWindow(object):
         if self.name.endswith('.mp3'):
             self.groupBox.setDisabled(False)
             self.musicname = self.clickeditem.text()
-        else:
+        elif not mp3Player.playing and not mp3Player.paused:
+            print(2, mp3Player.paused)
             self.groupBox.setDisabled(True)
 
         self.musicpath = self.comboBox_2.currentText()
@@ -865,7 +867,9 @@ class Ui_MainWindow(object):
             self.horizontalSlider.setSliderPosition(round((mp3Player.player.time / self.musicDuration) * 1000))
 
     def setmediaPlayerDis(self):
-        self.groupBox.setDisabled(True)
+        if not mp3Player.playing and not mp3Player.paused:
+            print(3, mp3Player.paused)
+            self.groupBox.setDisabled(True)
 
     def Delete(self):
         self.clickeditem_1 = self.tableWidget.currentItem()
@@ -1059,7 +1063,7 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    if app.exec_()==0:
+    if app.exec_() == 0:
         mp3Player.seek(ui.musicDuration)
         '''ui.movingSlider._is_stopped = True
         ui.movingSlider._tstate_lock = None'''
