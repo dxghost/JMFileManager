@@ -25,6 +25,8 @@ import otherwindows
 import Openfilewindows
 from PyQt5.QtWidgets import QApplication, QFileSystemModel, QTreeView, QWidget, QVBoxLayout
 from  PyQt5.QtCore import QDir, Qt
+import favourite
+
 mp3Player = mp3Player.mp3Player()
 
 
@@ -98,7 +100,9 @@ class Ui_MainWindow(object):
         self.pyicon = QtGui.QIcon()
         self.pyicon.addPixmap(QtGui.QPixmap("ui icons/py.png"),
                               QtGui.QIcon.Active, QtGui.QIcon.On)
-
+        self.staricon = QtGui.QIcon()
+        self.staricon.addPixmap(QtGui.QPixmap("ui icons/star-icon.png"),
+                                QtGui.QIcon.Active, QtGui.QIcon.On)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("ui icons/icons8-add-file-100.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
@@ -237,7 +241,6 @@ class Ui_MainWindow(object):
         self.icon13.addPixmap(QtGui.QPixmap("ui icons/93096_235205_folder_open.png"), QtGui.QIcon.Normal,
                               QtGui.QIcon.On)
 
-
         self.dps_defualt = psutil.disk_partitions()
         fmt_str = "{:<8}"
         fmt_str.format("Opts")
@@ -247,7 +250,6 @@ class Ui_MainWindow(object):
                 self.dps.append(self.dps_defualt[i])
 
         self.items = []
-
 
         for t in range(len(self.dps)):
             self.comboBox_2.addItem(self.icon18, self.dps[t][0])
@@ -374,7 +376,7 @@ class Ui_MainWindow(object):
         self.horizontalSlider.setObjectName("horizontalSlider")
 
         self.toolButton_11 = QtWidgets.QToolButton(self.groupBox)
-        self.toolButton_11.setGeometry(QtCore.QRect(60, 20, 41, 41))
+        self.toolButton_11.setGeometry(QtCore.QRect(390, 20, 41, 41))
         self.toolButton_11.setText("")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("ui icons/pause-icon.png"),
@@ -385,8 +387,9 @@ class Ui_MainWindow(object):
         self.toolButton_11.setToolButtonStyle(QtCore.Qt.ToolButtonFollowStyle)
         self.toolButton_11.setAutoRaise(True)
         self.toolButton_11.setObjectName("toolButton_11")
+
         self.toolButton_10 = QtWidgets.QToolButton(self.groupBox)
-        self.toolButton_10.setGeometry(QtCore.QRect(10, 20, 41, 41))
+        self.toolButton_10.setGeometry(QtCore.QRect(345, 20, 41, 41))
         self.toolButton_10.setText("")
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap("ui icons/media.png"),
@@ -411,6 +414,7 @@ class Ui_MainWindow(object):
         self.toolButton_12.setToolTip('Refresh')
 
         MainWindow.setCentralWidget(self.centralwidget)
+
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1120, 26))
         self.menubar.setObjectName("menubar")
@@ -423,9 +427,7 @@ class Ui_MainWindow(object):
         self.menuHelp = QtWidgets.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
         MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+
         self.actionOpen_directiory = QtWidgets.QAction(MainWindow)
         self.actionOpen_directiory.setObjectName("actionOpen_directiory")
         self.menuFile.addAction(self.actionOpen_directiory)
@@ -435,8 +437,12 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuView_2.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
         self.toolButton_14 = QtWidgets.QToolButton(self.groupBox)
-        self.toolButton_14.setGeometry(QtCore.QRect(110, 20, 41, 41))
+        self.toolButton_14.setGeometry(QtCore.QRect(300, 20, 41, 41))
         self.toolButton_14.setText("")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("ui icons/fast-forward - 2Copy.png"),
@@ -448,7 +454,7 @@ class Ui_MainWindow(object):
         self.toolButton_14.setAutoRaise(True)
         self.toolButton_14.setObjectName("toolButton_14")
         self.toolButton_15 = QtWidgets.QToolButton(self.groupBox)
-        self.toolButton_15.setGeometry(QtCore.QRect(160, 20, 41, 41))
+        self.toolButton_15.setGeometry(QtCore.QRect(437, 20, 41, 41))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -524,7 +530,19 @@ class Ui_MainWindow(object):
         self.toolButton_15.clicked.connect(self.nextButton)
         self.toolButton_14.clicked.connect(self.previousButton)
         self.toolButton_2.clicked.connect(self.openwindows_2)
+        self.treeView.doubleClicked.connect(self.ConnectTreetoTable)
+        self.toolButton_9.clicked.connect(self.favourite)
+        self.label = QtWidgets.QLabel(self.centralwidget)
 
+        self.label_allDuuration = QtWidgets.QLabel(self.centralwidget)
+        self.label_allDuuration.setGeometry(QtCore.QRect(1078, 733, 55, 16))
+        self.label_allDuuration.setObjectName("label_duration")
+        self.label_allDuuration.setDisabled(True)
+
+        self.label_seek = QtWidgets.QLabel(self.centralwidget)
+        self.label_seek.setGeometry(QtCore.QRect(1031, 733, 55, 16))
+        self.label_seek.setObjectName("label_seek")
+        self.label_seek.setDisabled(True)
 
     def retranslateUi(self, MainWindow):
 
@@ -600,6 +618,8 @@ class Ui_MainWindow(object):
         self.msg_1.setText("Directory Error")
         self.msg_1.setWindowTitle("Something went wrong!")
         self.msg_1.setStandardButtons(QMessageBox.Ok)
+
+        self.favaddres_list = []
 
     def selectionchange(self, i):
         _translate = QtCore.QCoreApplication.translate
@@ -698,8 +718,7 @@ class Ui_MainWindow(object):
         self.clickeditem = self.tableWidget.currentItem()
         fileName, fileExtension = os.path.splitext(self.clickeditem.text())
         self.opendirfile = self.comboBox_2.currentText()
-        self.opendirfile += self.clickeditem.text()
-
+        self.opendirfile = self.comboBox_2.currentText() + "\\" + self.clickeditem.text()
 
         if fileExtension == '.png' or fileExtension == '.jpg' or fileExtension == '.jpeg' or fileExtension == '.gif':
             img = Image.open(self.opendirfile)
@@ -727,7 +746,7 @@ class Ui_MainWindow(object):
         if fileExtension == '' or len(fileExtension) > 4 or len(fileExtension) == 2:
             self.addpath = self.clickeditem.text()
             self.path = self.comboBox_2.currentText()
-            self.path += self.addpath + "\\"
+            self.path = self.path + "\\" + self.addpath
             try:
                 self.lisrdir = os.listdir(self.path)
             except PermissionError:
@@ -769,7 +788,7 @@ class Ui_MainWindow(object):
                     item.setIcon(self.iconblank)
                 fileName, fileExtension = os.path.splitext(self.lisrdir[i])
                 fileExtension = fileExtension.lower()
-                #if len(fileExtension) != 4 and len(fileExtension) != 6 and len(fileExtension) != 5:
+                # if len(fileExtension) != 4 and len(fileExtension) != 6 and len(fileExtension) != 5:
                 #    item.setIcon(self.icon1)
                 if os.path.isdir(self.comboBox_2.currentText() + "\\" + self.lisrdir[i]):
                     item.setIcon(self.icon1)
@@ -812,7 +831,7 @@ class Ui_MainWindow(object):
                     item_2 = self.tableWidget.item(j, i + 1)
                     if '.' in fileExtension and len(fileExtension) >= 4:
                         self.ext = fileExtension
-                        self.size = os.path.getsize(self.path + self.lisrdir[j])
+                        self.size = os.path.getsize(self.path + "\\" + self.lisrdir[j])
                         item_2.setText(_translate("MainWindow", str(self.size)))
                         item.setText(_translate("MainWindow", self.ext))
                     item.setFlags(QtCore.Qt.ItemIsSelectable)
@@ -837,7 +856,7 @@ class Ui_MainWindow(object):
         try:
             os.chdir(self.path)
             os.chdir('..')
-            self.path = os.getcwd() + '\\'
+            self.path = os.getcwd()
             self.lisrdir = os.listdir(self.path)
         except:
             pass
@@ -955,8 +974,10 @@ class Ui_MainWindow(object):
             # print(self.musicpath)
 
     def playButton(self):
+        self.fileNamemusic = mp3Player.playList[mp3Player.n].split('\\')
         if mp3Player.playList == self.pathMusics and not mp3Player.playing:
             mp3Player.play()
+            self.label.setText(_translate("MainWindow", self.name))
         elif mp3Player.playList == self.pathMusics and mp3Player.playing:
             mp3Player.pause()
             mp3Player.jumpInPlayList(self.musicpath)
@@ -973,6 +994,7 @@ class Ui_MainWindow(object):
 
     def nextButton(self):
         mp3Player.next()
+        self.label.setText(_translate("MainWindow", self.name))
 
     def previousButton(self):
         mp3Player.previous()
@@ -981,11 +1003,14 @@ class Ui_MainWindow(object):
         self.musicDuration = MP3(mp3Player.playList[mp3Player.n]).info.length
         while (mp3Player.player.time != self.musicDuration):
             self.horizontalSlider.setSliderPosition(round((mp3Player.player.time / self.musicDuration) * 1000))
+            self.label_allDuuration.setText(_translate("MainWindow", self.musicDuration))
+            self.label_seek.setText(_translate("MainWindow", mp3Player.player.time + "  |"))
 
     def setmediaPlayerDis(self):
         if not mp3Player.playing and not mp3Player.paused:
             # print(3, mp3Player.paused)
             self.groupBox.setDisabled(True)
+            self.label.setDisabled(True)
 
     def Delete(self):
         self.clickeditem_1 = self.tableWidget.currentItem()
@@ -994,6 +1019,7 @@ class Ui_MainWindow(object):
         else:
             self.toolButton_3.setDisabled(False)
         self.deletepath = self.comboBox_2.currentText()
+        self.rootpath = self.comboBox_2.currentText()
         try:
             self.deletepath += self.clickeditem_1.text()
         except:
@@ -1002,11 +1028,22 @@ class Ui_MainWindow(object):
     def DeleteItems(self):
         # delete file
         # file path is = self.deletepath
+        if os.path.isdir(self.deletepath):
+            for i in os.listdir(self.deletepath):
+                try:
+                    os.remove(self.deletepath + '\\' + i)
+                except:
+                    pass
+            try:
+                os.removedirs(self.deletepath)
+            except:
+                pass
         print(self.deletepath)
-        try:
-            os.remove(self.deletepath)
-        except:
-            pass
+        if not os.path.isdir(self.deletepath):
+            try:
+                os.remove(self.deletepath)
+            except:
+                pass
         self.Refresh()
 
     def setDisabledDelete(self):
@@ -1313,7 +1350,7 @@ class Ui_MainWindow(object):
                 item_2 = self.tableWidget.item(j, i + 1)
                 if '.' in fileExtension and len(fileExtension) >= 4:
                     self.ext = fileExtension
-                    self.size = os.path.getsize(self.path + self.lisrdir[j])
+                    self.size = os.path.getsize(self.path + "\\" + self.lisrdir[j])
                     item_2.setText(_translate("MainWindow", str(self.size)))
                     item.setText(_translate("MainWindow", self.ext))
                 item.setFlags(QtCore.Qt.ItemIsSelectable)
@@ -1325,9 +1362,249 @@ class Ui_MainWindow(object):
             # self.comboBox_2.addItem(self.path)
             # self.comboBox_2.setCurrentText(self.path)
 
+    def ConnectTreetoTable(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.pathfromtree = self.model.filePath(self.treeView.currentIndex())
+        self.path = self.pathfromtree
+        self.path = self.path.replace("/", "\\")
+        self.comboBox_2.setCurrentText(self.path)
+        try:
+            self.lisrdir = os.listdir(self.path)
+        except PermissionError:
+            self.msg.exec_()
+            self.path = self.comboBox_2.currentText()
+        except NotADirectoryError:
+            self.msg_1.exec_()
+            self.path = self.comboBox_2.currentText()
+        self.num = self.comboBox_2.currentIndex()
+        self.comboBox_2.setItemText(self.num, self.path)
+        self.lisrdir.sort()
+        self.row = len(self.lisrdir)
+        # print(self.row)
+        self.tableWidget.clear()
+        self.tableWidget.setRowCount(self.row)
+        self.tableWidget.setIconSize(QtCore.QSize(25, 25))
+        self.vertiitems = []
+        self.horiitems = []
+        # print(self.lisrdir)
+        # print(len(self.lisrdir))
+        for j in range(len(
+                self.lisrdir)):  # sakht radif aval radif dovom radif sevom be tor amodi , sakht 1 ta len(
+            # self.lisrdir) radif b tor ofoqi
+            for i in range(1, 3):
+                item = QtWidgets.QTableWidgetItem()  # amodi
+                self.vertiitems.append(item)
+                item.setFlags(QtCore.Qt.ItemIsEnabled)
+                self.tableWidget.setItem(j, i, item)
+
+        for t in range(3):  # sakhtane header
+            item = QtWidgets.QTableWidgetItem()
+            item.setFlags(QtCore.Qt.ItemIsEnabled)
+            self.tableWidget.setHorizontalHeaderItem(t, item)  # ofoqi
+
+        for i in range(self.row):  # sakhte radif aval hamrah ba icon
+            item = QtWidgets.QTableWidgetItem()  # amodi
+            self.horiitems.append(item)
+            if self.lisrdir[i].endswith(''):
+                item.setIcon(self.iconblank)
+            fileName, fileExtension = os.path.splitext(self.lisrdir[i])
+            fileExtension = fileExtension.lower()
+            # if len(fileExtension) != 4 and len(fileExtension) != 6 and len(fileExtension) != 5:
+            #    item.setIcon(self.icon1)
+            if os.path.isdir(self.comboBox_2.currentText() + "\\" + self.lisrdir[i]):
+                item.setIcon(self.icon1)
+
+            # print(fileExtension)
+            if self.lisrdir[i].endswith('.zip'):
+                item.setIcon(self.icon5)
+            if self.lisrdir[i].endswith('.rar'):
+                item.setIcon(self.iconrar)
+            if self.lisrdir[i].endswith('.pdf'):
+                item.setIcon(self.iconpdf)
+            if self.lisrdir[i].endswith('.mp3'):
+                item.setIcon(self.iconmp3)
+            if self.lisrdir[i].endswith('.7zip'):
+                item.setIcon(self.icon7zip)
+            if self.lisrdir[i].endswith('.jpg'):
+                item.setIcon(self.iconjpg)
+            if self.lisrdir[i].endswith('.png'):
+                item.setIcon(self.iconpng)
+            if self.lisrdir[i].endswith('.txt'):
+                item.setIcon(self.icontxt)
+            if self.lisrdir[i].endswith('.exe'):
+                item.setIcon(self.iconexe)
+            if self.lisrdir[i].endswith('.py'):
+                item.setIcon(self.pyicon)
+
+            item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+            self.tableWidget.setItem(i, 0, item)
+        for i in range(len(self.lisrdir)):  # name gozari file ha
+            item = self.tableWidget.item(i, 0)  # amodi ofoqi
+            item.setText(_translate("MainWindow", self.lisrdir[i]))
+
+        for j in range(len(self.lisrdir)):  # name gozari type , size
+            for i in range(1, 2):
+                item = self.tableWidget.item(j, i)
+                item.setText(_translate("MainWindow", 'File Folder'))
+                self.ext = ''
+                fileName, fileExtension = os.path.splitext(self.lisrdir[j])
+                item_2 = self.tableWidget.item(j, i + 1)
+                if '.' in fileExtension and len(fileExtension) >= 4:
+                    self.ext = fileExtension
+                    self.size = os.path.getsize(self.path + "\\" + self.lisrdir[j])
+                    item_2.setText(_translate("MainWindow", str(self.size)))
+                    item.setText(_translate("MainWindow", self.ext))
+                item.setFlags(QtCore.Qt.ItemIsSelectable)
+                item_2.setFlags(QtCore.Qt.ItemIsSelectable)
+
+        for t in range(len(self.title)):  # name gozari header ba onvane name,type, size
+            item = self.tableWidget.horizontalHeaderItem(t)  # ofoqi
+            item.setText(_translate("MainWindow", self.title[t]))
+            # self.comboBox_2.addItem(self.path)
+            # self.comboBox_2.setCurrentText(self.path)
+        self.pathMusics = []
+        self.currentpathmusic = self.comboBox_2.currentText()
+        self.listmusic = os.listdir(self.currentpathmusic)
+        for i in range(len(self.listmusic)):
+            if self.listmusic[i].endswith('.mp3'):
+                self.pathMusics.append(self.currentpathmusic + self.listmusic[i])
+
+    def favourite(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.window_3 = QtWidgets.QMainWindow()
+        self.ui_3 = favourite.Ui_Openfolder()
+        self.ui_3.setupUi(self.window_3)
+        self.window_3.show()
+        self.favaddres = self.comboBox_2.currentText()
+        self.ui_3.label_2.setText(_translate("Openfolder", self.favaddres))
+        self.ui_3.pushButton_2.clicked.connect(self.addToFav)
+        for i in range(len(self.favaddres_list)):
+            self.ui_3.comboBox.addItem(self.staricon, self.favaddres_list[i])
+
+        self.ui_3.pushButton_2.clicked.connect(self.Closewindows_3)
+        self.ui_3.pushButton.clicked.connect(self.gotofavadrs)
+
+    def addToFav(self):
+        self.favaddres = self.comboBox_2.currentText()
+        if not self.favaddres in self.favaddres_list:
+            self.favaddres_list.append(self.favaddres)
+
+        self.ui_3.comboBox.setCurrentIndex(len(self.favaddres_list) - 1)
+
+    def gotofavadrs(self):
+        self.window_3.close()
+
+        _translate = QtCore.QCoreApplication.translate
+        self.godir = self.ui_3.comboBox.currentText()
+        self.comboBox_2.setCurrentText(self.godir)
+        self.path = self.godir
+        try:
+            self.lisrdir = os.listdir(self.path)
+        except PermissionError:
+            self.msg.exec_()
+            self.path = self.comboBox_2.currentText()
+        except NotADirectoryError:
+            self.msg_1.exec_()
+            self.path = self.comboBox_2.currentText()
+        self.num = self.comboBox_2.currentIndex()
+        self.comboBox_2.setItemText(self.num, self.path)
+        self.lisrdir.sort()
+        self.row = len(self.lisrdir)
+        # print(self.row)
+        self.tableWidget.clear()
+        self.tableWidget.setRowCount(self.row)
+        self.tableWidget.setIconSize(QtCore.QSize(25, 25))
+        self.vertiitems = []
+        self.horiitems = []
+        # print(self.lisrdir)
+        # print(len(self.lisrdir))
+        for j in range(len(
+                self.lisrdir)):  # sakht radif aval radif dovom radif sevom be tor amodi , sakht 1 ta len(
+            # self.lisrdir) radif b tor ofoqi
+            for i in range(1, 3):
+                item = QtWidgets.QTableWidgetItem()  # amodi
+                self.vertiitems.append(item)
+                item.setFlags(QtCore.Qt.ItemIsEnabled)
+                self.tableWidget.setItem(j, i, item)
+
+        for t in range(3):  # sakhtane header
+            item = QtWidgets.QTableWidgetItem()
+            item.setFlags(QtCore.Qt.ItemIsEnabled)
+            self.tableWidget.setHorizontalHeaderItem(t, item)  # ofoqi
+
+        for i in range(self.row):  # sakhte radif aval hamrah ba icon
+            item = QtWidgets.QTableWidgetItem()  # amodi
+            self.horiitems.append(item)
+            if self.lisrdir[i].endswith(''):
+                item.setIcon(self.iconblank)
+            fileName, fileExtension = os.path.splitext(self.lisrdir[i])
+            fileExtension = fileExtension.lower()
+            if os.path.isdir(self.comboBox_2.currentText() + "\\" + self.lisrdir[i]):
+                item.setIcon(self.icon1)
+            # print(fileExtension)
+            if self.lisrdir[i].endswith('.zip'):
+                item.setIcon(self.icon5)
+            if self.lisrdir[i].endswith('.rar'):
+                item.setIcon(self.iconrar)
+            if self.lisrdir[i].endswith('.pdf'):
+                item.setIcon(self.iconpdf)
+            if self.lisrdir[i].endswith('.mp3'):
+                item.setIcon(self.iconmp3)
+            if self.lisrdir[i].endswith('.7zip'):
+                item.setIcon(self.icon7zip)
+            if self.lisrdir[i].endswith('.jpg'):
+                item.setIcon(self.iconjpg)
+            if self.lisrdir[i].endswith('.png'):
+                item.setIcon(self.iconpng)
+            if self.lisrdir[i].endswith('.txt'):
+                item.setIcon(self.icontxt)
+            if self.lisrdir[i].endswith('.exe'):
+                item.setIcon(self.iconexe)
+            if self.lisrdir[i].endswith('.py'):
+                item.setIcon(self.pyicon)
+
+            item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+            self.tableWidget.setItem(i, 0, item)
+
+        for i in range(len(self.lisrdir)):  # name gozari file ha
+            item = self.tableWidget.item(i, 0)  # amodi ofoqi
+            item.setText(_translate("MainWindow", self.lisrdir[i]))
+
+        for j in range(len(self.lisrdir)):  # name gozari type , size ba onvane fuck
+            for i in range(1, 2):
+                item = self.tableWidget.item(j, i)
+                item.setText(_translate("MainWindow", 'File Folder'))
+                self.ext = ''
+                fileName, fileExtension = os.path.splitext(self.lisrdir[j])
+                item_2 = self.tableWidget.item(j, i + 1)
+                if '.' in fileExtension and len(fileExtension) >= 4:
+                    self.ext = fileExtension
+                    self.size = os.path.getsize(self.path + "\\" + self.lisrdir[j])
+                    item_2.setText(_translate("MainWindow", str(self.size)))
+                    item.setText(_translate("MainWindow", self.ext))
+                item.setFlags(QtCore.Qt.ItemIsSelectable)
+                item_2.setFlags(QtCore.Qt.ItemIsSelectable)
+
+        for t in range(len(self.title)):  # name gozari header ba onvane name,type, size
+            item = self.tableWidget.horizontalHeaderItem(t)  # ofoqi
+            item.setText(_translate("MainWindow", self.title[t]))
+            # self.comboBox_2.addItem(self.path)
+            # self.comboBox_2.setCurrentText(self.path)
+
+        self.pathMusics = []
+        self.currentpathmusic = self.comboBox_2.currentText()
+        self.listmusic = os.listdir(self.currentpathmusic)
+        for i in range(len(self.listmusic)):
+            if self.listmusic[i].endswith('.mp3'):
+                self.pathMusics.append(self.currentpathmusic + self.listmusic[i])
+
+    def Closewindows_3(self):
+        self.window_3.close()
+
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
