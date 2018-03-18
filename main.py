@@ -24,7 +24,7 @@ from mutagen.mp3 import MP3
 import otherwindows
 import Openfilewindows
 from PyQt5.QtWidgets import QApplication, QFileSystemModel, QTreeView, QWidget, QVBoxLayout
-
+from  PyQt5.QtCore import QDir, Qt
 mp3Player = mp3Player.mp3Player()
 
 
@@ -700,24 +700,28 @@ class Ui_MainWindow(object):
         self.opendirfile = self.comboBox_2.currentText()
         self.opendirfile += self.clickeditem.text()
 
+
         if fileExtension == '.png' or fileExtension == '.jpg' or fileExtension == '.jpeg' or fileExtension == '.gif':
             img = Image.open(self.opendirfile)
             img.show()
-        if fileExtension == '.txt':
+        elif fileExtension == '.txt':
             programName = "notepad.exe"
             sp.Popen([programName, self.opendirfile])
 
-        if fileExtension == '.txt':
+        elif fileExtension == '.txt':
             programName = "notepad.exe"
             sp.Popen([programName, self.opendirfile])
 
-        if fileExtension == '.mp4' or fileExtension == '.mpg' or fileExtension == '.mkv' or fileExtension == '.mov' or fileExtension == '.flv' or fileExtension == '.3gp' or fileExtension == '.mpeg':
+        elif fileExtension == '.mp4' or fileExtension == '.mpg' or fileExtension == '.mkv' or fileExtension == '.mov' or fileExtension == '.flv' or fileExtension == '.3gp' or fileExtension == '.mpeg':
             startfile(self.opendirfile)
 
-        if fileExtension == '.pdf':
+        elif fileExtension == '.pdf':
             sp.Popen([self.opendirfile], shell=True)
 
-        if fileExtension == '.exe':
+        elif fileExtension == '.exe':
+            os.startfile(self.opendirfile)
+
+        elif not os.path.isdir(self.opendirfile):
             os.startfile(self.opendirfile)
 
         if fileExtension == '' or len(fileExtension) > 4 or len(fileExtension) == 2:
