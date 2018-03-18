@@ -1,5 +1,5 @@
 import pyglet
-import time
+import os
 
 class mp3Player:
     def __init__(self, n=0, playList=[]):
@@ -7,6 +7,7 @@ class mp3Player:
         self.playList = playList
         self.player = pyglet.media.Player()
         self.playing = False
+        self.paused = False
 
     def addToPlayList(self, songDirectory):
         self.playList.append(songDirectory)
@@ -24,16 +25,19 @@ class mp3Player:
         self.player.queue(pyglet.media.load(self.playList[self.n]))
         self.player.play()
         self.playing = True
+        self.paused = False
 
 
     def pause(self):
         self.player.pause()
         self.playing = False
+        self.paused = True
 
     def stop(self):
         self.seek(0)
         self.pause()
         self.playing = False
+        self.paused = False
 
     def previous(self):
         if self.n > 0:
