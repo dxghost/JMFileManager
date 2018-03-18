@@ -316,7 +316,7 @@ class Ui_MainWindow(object):
             fileName, fileExtension = os.path.splitext(self.lisrdir[i])
             fileExtension = fileExtension.lower()
 
-            if fileExtension == '':
+            if os.path.isdir(self.comboBox_2.currentText() + "\\" + self.lisrdir[i]):
                 item.setIcon(self.icon1)
             if self.lisrdir[i].endswith('.zip'):
                 item.setIcon(self.icon5)
@@ -577,6 +577,8 @@ class Ui_MainWindow(object):
                     self.size = os.path.getsize(self.path + self.lisrdir[j])
                     item_2.setText(_translate("MainWindow", str(self.size)))
                     item.setText(_translate("MainWindow", self.ext))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 item.setFlags(QtCore.Qt.ItemIsSelectable)
                 item_2.setFlags(QtCore.Qt.ItemIsSelectable)
 
@@ -661,7 +663,7 @@ class Ui_MainWindow(object):
                 item.setIcon(self.iconblank)
             fileName, fileExtension = os.path.splitext(self.lisrdir[i])
             fileExtension = fileExtension.lower()
-            if len(fileExtension) != 4 and len(fileExtension) != 6 and len(fileExtension) != 5:
+            if os.path.isdir(self.comboBox_2.currentText() + "\\" + self.lisrdir[i]):
                 item.setIcon(self.icon1)
             # print(fileExtension)
             if self.lisrdir[i].endswith('.zip'):
@@ -704,6 +706,8 @@ class Ui_MainWindow(object):
                     self.size = os.path.getsize(self.path + self.lisrdir[j])
                     item_2.setText(_translate("MainWindow", str(self.size)))
                     item.setText(_translate("MainWindow", self.ext))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 item.setFlags(QtCore.Qt.ItemIsSelectable)
                 item_2.setFlags(QtCore.Qt.ItemIsSelectable)
 
@@ -743,10 +747,11 @@ class Ui_MainWindow(object):
         elif not os.path.isdir(self.opendirfile):
             os.startfile(self.opendirfile)
 
-        if fileExtension == '' or len(fileExtension) > 4 or len(fileExtension) == 2:
+        if os.path.isdir(self.opendirfile):
+        #if fileExtension == '' or len(fileExtension) > 4 or len(fileExtension) == 2:
             self.addpath = self.clickeditem.text()
             self.path = self.comboBox_2.currentText()
-            self.path = self.path + "\\" + self.addpath
+            self.path =self.path+"\\"+self.addpath + "\\"
             try:
                 self.lisrdir = os.listdir(self.path)
             except PermissionError:
@@ -825,7 +830,8 @@ class Ui_MainWindow(object):
             for j in range(len(self.lisrdir)):  # name gozari type , size
                 for i in range(1, 2):
                     item = self.tableWidget.item(j, i)
-                    item.setText(_translate("MainWindow", 'File Folder'))
+                    if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                        item.setText(_translate("MainWindow", 'File Folder'))
                     self.ext = ''
                     fileName, fileExtension = os.path.splitext(self.lisrdir[j])
                     item_2 = self.tableWidget.item(j, i + 1)
@@ -834,6 +840,8 @@ class Ui_MainWindow(object):
                         self.size = os.path.getsize(self.path + "\\" + self.lisrdir[j])
                         item_2.setText(_translate("MainWindow", str(self.size)))
                         item.setText(_translate("MainWindow", self.ext))
+                    if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                        item.setText(_translate("MainWindow", 'File Folder'))
                     item.setFlags(QtCore.Qt.ItemIsSelectable)
                     item_2.setFlags(QtCore.Qt.ItemIsSelectable)
 
@@ -927,7 +935,8 @@ class Ui_MainWindow(object):
         for j in range(len(self.lisrdir)):  # name gozari type , size ba onvane fuck
             for i in range(1, 2):
                 item = self.tableWidget.item(j, i)
-                item.setText(_translate("MainWindow", 'File Folder'))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 self.ext = ''
                 fileName, fileExtension = os.path.splitext(self.lisrdir[j])
                 item_2 = self.tableWidget.item(j, i + 1)
@@ -936,6 +945,8 @@ class Ui_MainWindow(object):
                     self.size = os.path.getsize(self.path + "\\" + self.lisrdir[j])
                     item_2.setText(_translate("MainWindow", str(self.size)))
                     item.setText(_translate("MainWindow", self.ext))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 item.setFlags(QtCore.Qt.ItemIsSelectable)
                 item_2.setFlags(QtCore.Qt.ItemIsSelectable)
 
@@ -972,12 +983,11 @@ class Ui_MainWindow(object):
         if self.groupBox.setDisabled:
             self.musicpath += self.musicname
             # print(self.musicpath)
-
+        #self.musicpath = self.musicpath.replace("\\","/")
+        print(self.musicpath)
     def playButton(self):
-        self.fileNamemusic = mp3Player.playList[mp3Player.n].split('\\')
         if mp3Player.playList == self.pathMusics and not mp3Player.playing:
             mp3Player.play()
-            self.label.setText(_translate("MainWindow", self.name))
         elif mp3Player.playList == self.pathMusics and mp3Player.playing:
             mp3Player.pause()
             mp3Player.jumpInPlayList(self.musicpath)
@@ -994,17 +1004,17 @@ class Ui_MainWindow(object):
 
     def nextButton(self):
         mp3Player.next()
-        self.label.setText(_translate("MainWindow", self.name))
 
     def previousButton(self):
         mp3Player.previous()
 
     def moveSlider(self):
+        _translate = QtCore.QCoreApplication.translate
         self.musicDuration = MP3(mp3Player.playList[mp3Player.n]).info.length
         while (mp3Player.player.time != self.musicDuration):
             self.horizontalSlider.setSliderPosition(round((mp3Player.player.time / self.musicDuration) * 1000))
-            self.label_allDuuration.setText(_translate("MainWindow", self.musicDuration))
-            self.label_seek.setText(_translate("MainWindow", mp3Player.player.time + "  |"))
+            self.label_allDuuration.setText(_translate("MainWindow", str(int(self.musicDuration))))
+            self.label_seek.setText(_translate("MainWindow", str(int(mp3Player.player.time)) + "  |"))
 
     def setmediaPlayerDis(self):
         if not mp3Player.playing and not mp3Player.paused:
@@ -1177,6 +1187,9 @@ class Ui_MainWindow(object):
         except NotADirectoryError:
             self.msg_1.exec_()
             self.path = self.comboBox_2.currentText()
+        except FileNotFoundError:
+            self.msg_1.exec_()
+            self.path = self.comboBox_2.currentText()
         self.num = self.comboBox_2.currentIndex()
         self.comboBox_2.setItemText(self.num, self.path)
         self.lisrdir.sort()
@@ -1244,7 +1257,8 @@ class Ui_MainWindow(object):
         for j in range(len(self.lisrdir)):  # name gozari type , size ba onvane fuck
             for i in range(1, 2):
                 item = self.tableWidget.item(j, i)
-                item.setText(_translate("MainWindow", 'File Folder'))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 self.ext = ''
                 fileName, fileExtension = os.path.splitext(self.lisrdir[j])
                 item_2 = self.tableWidget.item(j, i + 1)
@@ -1253,6 +1267,8 @@ class Ui_MainWindow(object):
                     self.size = os.path.getsize(self.path + "\\" + self.lisrdir[j])
                     item_2.setText(_translate("MainWindow", str(self.size)))
                     item.setText(_translate("MainWindow", self.ext))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 item.setFlags(QtCore.Qt.ItemIsSelectable)
                 item_2.setFlags(QtCore.Qt.ItemIsSelectable)
 
@@ -1344,7 +1360,8 @@ class Ui_MainWindow(object):
         for j in range(len(self.lisrdir)):  # name gozari type , size ba onvane fuck
             for i in range(1, 2):
                 item = self.tableWidget.item(j, i)
-                item.setText(_translate("MainWindow", 'File Folder'))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 self.ext = ''
                 fileName, fileExtension = os.path.splitext(self.lisrdir[j])
                 item_2 = self.tableWidget.item(j, i + 1)
@@ -1353,6 +1370,8 @@ class Ui_MainWindow(object):
                     self.size = os.path.getsize(self.path + "\\" + self.lisrdir[j])
                     item_2.setText(_translate("MainWindow", str(self.size)))
                     item.setText(_translate("MainWindow", self.ext))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 item.setFlags(QtCore.Qt.ItemIsSelectable)
                 item_2.setFlags(QtCore.Qt.ItemIsSelectable)
 
@@ -1445,7 +1464,8 @@ class Ui_MainWindow(object):
         for j in range(len(self.lisrdir)):  # name gozari type , size
             for i in range(1, 2):
                 item = self.tableWidget.item(j, i)
-                item.setText(_translate("MainWindow", 'File Folder'))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 self.ext = ''
                 fileName, fileExtension = os.path.splitext(self.lisrdir[j])
                 item_2 = self.tableWidget.item(j, i + 1)
@@ -1454,6 +1474,8 @@ class Ui_MainWindow(object):
                     self.size = os.path.getsize(self.path + "\\" + self.lisrdir[j])
                     item_2.setText(_translate("MainWindow", str(self.size)))
                     item.setText(_translate("MainWindow", self.ext))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 item.setFlags(QtCore.Qt.ItemIsSelectable)
                 item_2.setFlags(QtCore.Qt.ItemIsSelectable)
 
@@ -1573,7 +1595,8 @@ class Ui_MainWindow(object):
         for j in range(len(self.lisrdir)):  # name gozari type , size ba onvane fuck
             for i in range(1, 2):
                 item = self.tableWidget.item(j, i)
-                item.setText(_translate("MainWindow", 'File Folder'))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 self.ext = ''
                 fileName, fileExtension = os.path.splitext(self.lisrdir[j])
                 item_2 = self.tableWidget.item(j, i + 1)
@@ -1582,6 +1605,8 @@ class Ui_MainWindow(object):
                     self.size = os.path.getsize(self.path + "\\" + self.lisrdir[j])
                     item_2.setText(_translate("MainWindow", str(self.size)))
                     item.setText(_translate("MainWindow", self.ext))
+                if os.path.isdir(self.path + "\\" + self.lisrdir[j]):
+                    item.setText(_translate("MainWindow", 'File Folder'))
                 item.setFlags(QtCore.Qt.ItemIsSelectable)
                 item_2.setFlags(QtCore.Qt.ItemIsSelectable)
 
