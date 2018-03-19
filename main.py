@@ -23,6 +23,7 @@ import glob
 from mutagen.mp3 import MP3
 import otherwindows
 import Openfilewindows
+from PyQt5.QtWidgets import QApplication, QFileSystemModel, QTreeView, QWidget, QVBoxLayout
 
 mp3Player = mp3Player.mp3Player()
 
@@ -219,19 +220,6 @@ class Ui_MainWindow(object):
 
         # ---------------- Create partition in tree view
 
-        self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
-        self.treeWidget.setEnabled(True)
-        self.treeWidget.setGeometry(QtCore.QRect(10, 110, 256, 691))
-        self.treeWidget.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.treeWidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.treeWidget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.treeWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustIgnored)
-        self.treeWidget.setTabKeyNavigation(True)
-        self.treeWidget.setDragEnabled(True)
-        self.treeWidget.setDragDropOverwriteMode(True)
-        self.treeWidget.setUniformRowHeights(True)
-        self.treeWidget.setAnimated(True)
-        self.treeWidget.setObjectName("treeWidget")
 
         icon10 = QtGui.QIcon()
         icon10.addPixmap(QtGui.QPixmap("ui icons/my-computer-icon-81972.png"), QtGui.QIcon.Normal,
@@ -249,21 +237,6 @@ class Ui_MainWindow(object):
         self.icon13.addPixmap(QtGui.QPixmap("ui icons/93096_235205_folder_open.png"), QtGui.QIcon.Normal,
                               QtGui.QIcon.On)
 
-        self.treeWidget.headerItem().setIcon(0, icon10)
-        '''
-        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #create one drive
-        item_0.setIcon(0, icon11)
-        item_1 = QtWidgets.QTreeWidgetItem(item_0) # create two drive
-
-        item_1.setIcon(0, icon12)
-        item_2 = QtWidgets.QTreeWidgetItem(item_1)
-        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)#
-        item_0.setIcon(0, icon11)
-        item_1 = QtWidgets.QTreeWidgetItem(item_0)
-
-        item_1.setIcon(0, icon13)
-        item_2 = QtWidgets.QTreeWidgetItem(item_1)
-        '''
 
         self.dps_defualt = psutil.disk_partitions()
         fmt_str = "{:<8}"
@@ -274,27 +247,21 @@ class Ui_MainWindow(object):
                 self.dps.append(self.dps_defualt[i])
 
         self.items = []
-        for i in range(len(self.dps)):
-            j_item = QtWidgets.QTreeWidgetItem(self.treeWidget)
-            j_item.setIcon(0, icon11)
-            # self.dir = os.listdir(self.dps[i][0])
-            '''3
-            for root, dirs, files in os.walk("H:\\"):
-                a = dirs
-                for t in range(len())
 
-            for t in range(len(self.dir)):
-                self.folder = QtWidgets.QTreeWidgetItem(j_item)
-                self.folder.setIcon(0, icon13)
-                self.treeWidget.topLevelItem(i).child(t).setText(0, _translate("MainWindow", self.dir[t]))
-                #self.dir_2 = os.listdir(self.dps[i][0] + self.dir[t])
-            '''
-            self.items.append(j_item)
 
         for t in range(len(self.dps)):
             self.comboBox_2.addItem(self.icon18, self.dps[t][0])
 
         # --------------------------
+        self.treeView = QtWidgets.QTreeView(self.centralwidget)
+        self.treeView.setGeometry(QtCore.QRect(11, 110, 256, 689))
+        self.treeView.setObjectName("treeView")
+        self.model = QFileSystemModel()
+        self.model.setRootPath('')
+        self.treeView.setModel(self.model)
+        self.treeView.setAnimated(True)
+        self.treeView.setIndentation(20)
+        self.treeView.setSortingEnabled(True)
 
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget.setGeometry(QtCore.QRect(280, 150, 831, 540))
@@ -558,6 +525,7 @@ class Ui_MainWindow(object):
         self.toolButton_14.clicked.connect(self.previousButton)
         self.toolButton_2.clicked.connect(self.openwindows_2)
 
+
     def retranslateUi(self, MainWindow):
 
         _translate = QtCore.QCoreApplication.translate
@@ -572,23 +540,6 @@ class Ui_MainWindow(object):
         self.toolButton_7.setText(_translate("MainWindow", "Back"))
         self.toolButton_9.setText(_translate("MainWindow", "Favorites"))
         self.toolButton_13.setText(_translate("MainWindow", "Paste"))
-        self.treeWidget.headerItem().setText(0, _translate("MainWindow", "My Computer "))
-        __sortingEnabled = self.treeWidget.isSortingEnabled()
-        '''
-        self.treeWidget.setSortingEnabled(False)
-        self.treeWidget.topLevelItem(0).setText(0, _translate("MainWindow", "C:/"))
-        self.treeWidget.topLevelItem(0).child(0).setText(0, _translate("MainWindow", "Mamad"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).setText(0, _translate("MainWindow", "mamaly"))
-        self.treeWidget.topLevelItem(1).setText(0, _translate("MainWindow", "D:/"))
-        self.treeWidget.topLevelItem(1).child(0).setText(0, _translate("MainWindow", "Reza"))
-        self.treeWidget.topLevelItem(1).child(0).child(0).setText(0, _translate("MainWindow", "file1"))
-
-        self.treeWidget.topLevelItem(2).setText(0, _translate("MainWindow", "C:/"))
-        '''
-        self.treeWidget.setSortingEnabled(__sortingEnabled)
-
-        for i in range(len(self.items)):
-            self.treeWidget.topLevelItem(i).setText(0, _translate("MainWindow", self.dps[i][0]))
 
         self.tableWidget.setSortingEnabled(True)
 
