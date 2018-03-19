@@ -1701,8 +1701,9 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     if app.exec_() == 0:
-        mp3Player.seek(ui.musicDuration)
-        mp3Player.stop()
+        if mp3Player.player.source != None:
+            mp3Player.seek(ui.musicDuration)
+            mp3Player.stop()
         '''ui.movingSlider._is_stopped = True
         ui.movingSlider._tstate_lock = None'''
 
