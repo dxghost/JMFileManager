@@ -27,6 +27,9 @@ from PyQt5.QtWidgets import QApplication, QFileSystemModel, QTreeView, QWidget, 
 from  PyQt5.QtCore import QDir, Qt
 import favourite
 import renamewindows
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 mp3Player = mp3Player.mp3Player()
 
@@ -35,10 +38,10 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1120, 860)
-        MainWindow.setMinimumWidth(1120)
+        MainWindow.resize(1600, 860)
+        MainWindow.setMinimumWidth(1600)
         MainWindow.setMinimumHeight(860)
-        MainWindow.setMaximumWidth(1120)
+        MainWindow.setMaximumWidth(1600)
         MainWindow.setMaximumHeight(860)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -484,16 +487,16 @@ class Ui_MainWindow(object):
         self.toolButton_15.setToolButtonStyle(QtCore.Qt.ToolButtonFollowStyle)
         self.toolButton_15.setAutoRaise(True)
         self.toolButton_15.setObjectName("toolButton_15")
-        # self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        # self.label_2.setGeometry(QtCore.QRect(1121, 200, 471, 485))
-        # self.label_2.setFrameShape(QtWidgets.QFrame.Box)
-        # self.label_2.setFrameShadow(QtWidgets.QFrame.Plain)
-        # self.label_2.setTextFormat(QtCore.Qt.AutoText)
-        # self.label_2.setScaledContents(True)
-        # self.label_2.setAlignment(QtCore.Qt.AlignCenter)
-        # self.label_2.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
-        # self.label_2.setObjectName("label_2")
-        # self.label_2.setText(_translate("MainWindow", "No image For preview"))
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(1121, 200, 471, 485))
+        self.label_2.setFrameShape(QtWidgets.QFrame.Box)
+        self.label_2.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.label_2.setTextFormat(QtCore.Qt.AutoText)
+        self.label_2.setScaledContents(True)
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.label_2.setObjectName("label_2")
+        self.label_2.setText(_translate("MainWindow", "No image For preview"))
         # self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         # self.textBrowser.setGeometry(QtCore.QRect(1150, 180, 101, 30))
         # palette = QtGui.QPalette()
@@ -519,6 +522,8 @@ class Ui_MainWindow(object):
         self.tableWidget.cellClicked.connect(self.Cut)
         self.tableWidget.cellClicked.connect(self.Zip)
         self.tableWidget.cellClicked.connect(self.rename)
+        self.tableWidget.cellClicked.connect(self.showpic)
+
 
         # self.tableWidget.cellClicked.connect(self.Imagepreview)
 
@@ -528,12 +533,15 @@ class Ui_MainWindow(object):
         self.comboBox_2.currentIndexChanged.connect(self.setmediaPlayerDis)
         self.comboBox_2.currentIndexChanged.connect(self.setDisZip)
         self.comboBox_2.currentIndexChanged.connect(self.setDisrename)
+        self.comboBox_2.currentIndexChanged.connect(self.setDisimage)
         self.comboBox_2.currentTextChanged.connect(self.setDisabledDelete)
         self.comboBox_2.currentTextChanged.connect(self.setDisabledCopy)
         self.comboBox_2.currentTextChanged.connect(self.setDisabledCut)
         self.comboBox_2.currentTextChanged.connect(self.setmediaPlayerDis)
         self.comboBox_2.currentTextChanged.connect(self.setDisZip)
         self.comboBox_2.currentTextChanged.connect(self.setDisrename)
+        self.comboBox_2.currentTextChanged.connect(self.setDisimage)
+
 
         self.toolButton_3.clicked.connect(self.DeleteItems)
         self.toolButton_4.clicked.connect(self.CopyItems)
@@ -562,6 +570,7 @@ class Ui_MainWindow(object):
         self.label_seek.setGeometry(QtCore.QRect(1031, 733, 55, 16))
         self.label_seek.setObjectName("label_seek")
         self.label_seek.setDisabled(True)
+
 
     def retranslateUi(self, MainWindow):
 
@@ -982,6 +991,15 @@ class Ui_MainWindow(object):
     #    self.imagepath += self.clickeditem_img.text()
     #    self.label_2.setScaledContents(True)
     #    self.label_2.setPixmap(QtGui.QPixmap(self.imagepath))
+
+    def showpic(self):
+
+        if self.tableWidget.currentItem().text().endswith(".jpg"):
+            self.pixmap = QtGui.QPixmap(self.comboBox_2.currentText()+"\\"+self.tableWidget.currentItem().text())
+            self.label_2.setPixmap(self.pixmap)
+
+    def setDisimage(self):
+        self.label_2.setText("No image For preview")
 
     def Mediaplayer(self):
         self.clickeditem = self.tableWidget.currentItem()
