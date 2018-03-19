@@ -1,0 +1,9 @@
+JMFileManager
+
+First please copy "avbin.dll" placed in "requirements" folder to "C:\Windows\System" and "C:\Windows\System32".
+
+Modules Used for this project:
+PyQt5, psutil, os, thearding, shutil, sys, PIL, subprocess, glob, mutagen, pyglet, win32api and zipfile.
+
+Program Features:
+New folder, Open by directory, Delete, Copy, Cut, Paste, Compress, Favorites, Rename, Back, Refresh, Tree view, Dedicated music player and Image Preview :)
