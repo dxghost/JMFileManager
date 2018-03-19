@@ -26,6 +26,7 @@ import Openfilewindows
 from PyQt5.QtWidgets import QApplication, QFileSystemModel, QTreeView, QWidget, QVBoxLayout
 from  PyQt5.QtCore import QDir, Qt
 import favourite
+import renamewindows
 
 mp3Player = mp3Player.mp3Player()
 
@@ -171,7 +172,7 @@ class Ui_MainWindow(object):
         self.toolButton_6.setObjectName("toolButton_6")
         self.toolButton_6.setDisabled(True)
         self.toolButton_7 = QtWidgets.QToolButton(self.Toolbox)
-        self.toolButton_7.setGeometry(QtCore.QRect(530, 20, 71, 68))
+        self.toolButton_7.setGeometry(QtCore.QRect(600, 20, 71, 68))
         icon6 = QtGui.QIcon()
         icon6.addPixmap(QtGui.QPixmap("ui icons/Go Back-595b40b75ba036ed117d8029.svg"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
@@ -190,8 +191,20 @@ class Ui_MainWindow(object):
         self.toolButton_9.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolButton_9.setAutoRaise(True)
         self.toolButton_9.setObjectName("toolButton_9")
+
+        self.toolButton_ren = QtWidgets.QToolButton(self.Toolbox)
+        self.toolButton_ren.setGeometry(QtCore.QRect(530, 20, 71, 68))
+        icon8_ren = QtGui.QIcon()
+        icon8_ren.addPixmap(QtGui.QPixmap("ui icons/rename.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.toolButton_ren.setIcon(icon8_ren)
+        self.toolButton_ren.setIconSize(QtCore.QSize(35, 35))
+        self.toolButton_ren.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolButton_ren.setAutoRaise(True)
+        self.toolButton_ren.setObjectName("toolButton_9")
+        self.toolButton_ren.setDisabled(True)
         self.toolButton_13 = QtWidgets.QToolButton(self.Toolbox)
         self.toolButton_13.setGeometry(QtCore.QRect(310, 20, 71, 68))
+
         icon9 = QtGui.QIcon()
         icon9.addPixmap(QtGui.QPixmap("ui icons/paste.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.toolButton_13.setIcon(icon9)
@@ -505,6 +518,8 @@ class Ui_MainWindow(object):
         self.tableWidget.cellClicked.connect(self.Copy)
         self.tableWidget.cellClicked.connect(self.Cut)
         self.tableWidget.cellClicked.connect(self.Zip)
+        self.tableWidget.cellClicked.connect(self.rename)
+
         # self.tableWidget.cellClicked.connect(self.Imagepreview)
 
         self.comboBox_2.currentIndexChanged.connect(self.setDisabledDelete)
@@ -512,11 +527,14 @@ class Ui_MainWindow(object):
         self.comboBox_2.currentIndexChanged.connect(self.setDisabledCut)
         self.comboBox_2.currentIndexChanged.connect(self.setmediaPlayerDis)
         self.comboBox_2.currentIndexChanged.connect(self.setDisZip)
+        self.comboBox_2.currentIndexChanged.connect(self.setDisrename)
         self.comboBox_2.currentTextChanged.connect(self.setDisabledDelete)
         self.comboBox_2.currentTextChanged.connect(self.setDisabledCopy)
         self.comboBox_2.currentTextChanged.connect(self.setDisabledCut)
         self.comboBox_2.currentTextChanged.connect(self.setmediaPlayerDis)
         self.comboBox_2.currentTextChanged.connect(self.setDisZip)
+        self.comboBox_2.currentTextChanged.connect(self.setDisrename)
+
         self.toolButton_3.clicked.connect(self.DeleteItems)
         self.toolButton_4.clicked.connect(self.CopyItems)
         self.toolButton_13.clicked.connect(self.PasteItem)
@@ -532,6 +550,7 @@ class Ui_MainWindow(object):
         self.toolButton_2.clicked.connect(self.openwindows_2)
         self.treeView.doubleClicked.connect(self.ConnectTreetoTable)
         self.toolButton_9.clicked.connect(self.favourite)
+        self.toolButton_ren.clicked.connect(self.renameitems)
         self.label = QtWidgets.QLabel(self.centralwidget)
 
         self.label_allDuuration = QtWidgets.QLabel(self.centralwidget)
@@ -558,6 +577,7 @@ class Ui_MainWindow(object):
         self.toolButton_7.setText(_translate("MainWindow", "Back"))
         self.toolButton_9.setText(_translate("MainWindow", "Favorites"))
         self.toolButton_13.setText(_translate("MainWindow", "Paste"))
+        self.toolButton_ren.setText(_translate("MainWindow", "Rename"))
 
         self.tableWidget.setSortingEnabled(True)
 
@@ -748,10 +768,10 @@ class Ui_MainWindow(object):
             os.startfile(self.opendirfile)
 
         if os.path.isdir(self.opendirfile):
-        #if fileExtension == '' or len(fileExtension) > 4 or len(fileExtension) == 2:
+            # if fileExtension == '' or len(fileExtension) > 4 or len(fileExtension) == 2:
             self.addpath = self.clickeditem.text()
             self.path = self.comboBox_2.currentText()
-            self.path =self.path+"\\"+self.addpath + "\\"
+            self.path = self.path + "\\" + self.addpath + "\\"
             try:
                 self.lisrdir = os.listdir(self.path)
             except PermissionError:
@@ -983,8 +1003,9 @@ class Ui_MainWindow(object):
         if self.groupBox.setDisabled:
             self.musicpath += self.musicname
             # print(self.musicpath)
-        #self.musicpath = self.musicpath.replace("\\","/")
+        # self.musicpath = self.musicpath.replace("\\","/")
         print(self.musicpath)
+
     def playButton(self):
         if mp3Player.playList == self.pathMusics and not mp3Player.playing:
             mp3Player.play()
@@ -1035,6 +1056,44 @@ class Ui_MainWindow(object):
         except:
             pass
 
+    def rename(self):
+        self.clickeditem_ren = self.tableWidget.currentItem()
+        if not self.clickeditem_ren:
+            self.toolButton_ren.setDisabled(True)
+        else:
+            self.toolButton_ren.setDisabled(False)
+
+        self.renamepath = self.comboBox_2.currentText()
+        try:
+            self.renamepath += self.clickeditem_1.text()
+        except:
+            pass
+
+    def renameitems(self):
+
+        self.window_4 = QtWidgets.QMainWindow()
+        self.ui_4 = renamewindows.Ui_OtherWindows()
+        self.ui_4.setupUi(self.window_4)
+        self.ui_4.lineEdit.setText(self.clickeditem_ren.text())
+
+        self.window_4.show()
+
+        self.ui_4.pushButton.clicked.connect(self.closerename)
+
+    def closerename(self):
+        self.newname = self.ui_4.lineEdit.text()
+        self.renamepathdir = self.comboBox_2.currentText()
+        self.renameitem = self.tableWidget.currentItem().text()
+        try:
+            os.rename(os.path.join(self.renamepathdir, self.renameitem), self.renamepathdir + '\\' + self.newname)
+        except:
+            pass
+
+        self.window_4.close()
+        self.Refresh()
+    def setDisrename(self):
+        self.toolButton_ren.setDisabled(True)
+
     def DeleteItems(self):
         # delete file
         # file path is = self.deletepath
@@ -1073,7 +1132,9 @@ class Ui_MainWindow(object):
         self.method = 'Copy'
         self.copyingfile = self.comboBox_2.currentText()
         try:
-            self.copyingfile = self.copyingfile + "\\" + self.clickeditem_2.text()
+            #self.copyingfile = self.copyingfile + "\\" + self.clickeditem_2.text()
+            self.copyingfile = os.path.join(self.copyingfile, self.clickeditem_2.text())
+
         except:
             pass
 
@@ -1092,7 +1153,7 @@ class Ui_MainWindow(object):
         self.method = 'Cut'
         self.copyingfile = self.comboBox_2.currentText()
         try:
-            self.copyingfile += self.clickeditem_3.text()
+            self.copyingfile = os.path.join(self.copyingfile, self.clickeditem_3.text())
         except:
             pass
 
@@ -1112,7 +1173,10 @@ class Ui_MainWindow(object):
         except:
             pass
         if self.method == 'Cut':
-            os.remove(self.copyingfile)
+            try:
+                os.remove(self.copyingfile)
+            except:
+                pass
         self.Refresh()
         print('ps' + self.pastetoadrs)
         self.toolButton_13.setDisabled(True)
@@ -1290,6 +1354,7 @@ class Ui_MainWindow(object):
         self.toolButton_4.setDisabled(True)
         self.toolButton_5.setDisabled(True)
         self.toolButton_3.setDisabled(True)
+        self.toolButton_ren.setDisabled(True)
 
         _translate = QtCore.QCoreApplication.translate
         # print("Current index", i, "selection changed ", self.comboBox_2.currentText())
