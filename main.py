@@ -30,6 +30,7 @@ import renamewindows
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+import zipfile
 
 mp3Player = mp3Player.mp3Player()
 
@@ -107,6 +108,11 @@ class Ui_MainWindow(object):
         self.staricon = QtGui.QIcon()
         self.staricon.addPixmap(QtGui.QPixmap("ui icons/star-icon.png"),
                                 QtGui.QIcon.Active, QtGui.QIcon.On)
+
+        self.extracticon = QtGui.QIcon()
+        self.extracticon.addPixmap(QtGui.QPixmap("ui icons/extract-image.png"),
+                                   QtGui.QIcon.Active, QtGui.QIcon.On)
+
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("ui icons/icons8-add-file-100.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
@@ -175,7 +181,7 @@ class Ui_MainWindow(object):
         self.toolButton_6.setObjectName("toolButton_6")
         self.toolButton_6.setDisabled(True)
         self.toolButton_7 = QtWidgets.QToolButton(self.Toolbox)
-        self.toolButton_7.setGeometry(QtCore.QRect(600, 20, 71, 68))
+        self.toolButton_7.setGeometry(QtCore.QRect(670, 20, 71, 68))
         icon6 = QtGui.QIcon()
         icon6.addPixmap(QtGui.QPixmap("ui icons/Go Back-595b40b75ba036ed117d8029.svg"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
@@ -194,6 +200,15 @@ class Ui_MainWindow(object):
         self.toolButton_9.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolButton_9.setAutoRaise(True)
         self.toolButton_9.setObjectName("toolButton_9")
+
+        self.toolButton_extract = QtWidgets.QToolButton(self.Toolbox)
+        self.toolButton_extract.setGeometry(QtCore.QRect(600, 20, 71, 68))
+        self.toolButton_extract.setIcon(self.extracticon)
+        self.toolButton_extract.setIconSize(QtCore.QSize(35, 35))
+        self.toolButton_extract.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolButton_extract.setAutoRaise(True)
+        self.toolButton_extract.setObjectName("Extractbutton")
+        self.toolButton_extract.setDisabled(True)
 
         self.toolButton_ren = QtWidgets.QToolButton(self.Toolbox)
         self.toolButton_ren.setGeometry(QtCore.QRect(530, 20, 71, 68))
@@ -523,7 +538,7 @@ class Ui_MainWindow(object):
         self.tableWidget.cellClicked.connect(self.Zip)
         self.tableWidget.cellClicked.connect(self.rename)
         self.tableWidget.cellClicked.connect(self.showpic)
-
+        self.tableWidget.cellClicked.connect(self.extract)
 
         # self.tableWidget.cellClicked.connect(self.Imagepreview)
 
@@ -534,6 +549,8 @@ class Ui_MainWindow(object):
         self.comboBox_2.currentIndexChanged.connect(self.setDisZip)
         self.comboBox_2.currentIndexChanged.connect(self.setDisrename)
         self.comboBox_2.currentIndexChanged.connect(self.setDisimage)
+        self.comboBox_2.currentIndexChanged.connect(self.setDisextract)
+
         self.comboBox_2.currentTextChanged.connect(self.setDisabledDelete)
         self.comboBox_2.currentTextChanged.connect(self.setDisabledCopy)
         self.comboBox_2.currentTextChanged.connect(self.setDisabledCut)
@@ -541,7 +558,7 @@ class Ui_MainWindow(object):
         self.comboBox_2.currentTextChanged.connect(self.setDisZip)
         self.comboBox_2.currentTextChanged.connect(self.setDisrename)
         self.comboBox_2.currentTextChanged.connect(self.setDisimage)
-
+        self.comboBox_2.currentTextChanged.connect(self.setDisextract)
 
         self.toolButton_3.clicked.connect(self.DeleteItems)
         self.toolButton_4.clicked.connect(self.CopyItems)
@@ -559,6 +576,8 @@ class Ui_MainWindow(object):
         self.treeView.doubleClicked.connect(self.ConnectTreetoTable)
         self.toolButton_9.clicked.connect(self.favourite)
         self.toolButton_ren.clicked.connect(self.renameitems)
+        self.toolButton_extract.clicked.connect(self.extractitems)
+
         self.label = QtWidgets.QLabel(self.centralwidget)
 
         self.label_allDuuration = QtWidgets.QLabel(self.centralwidget)
@@ -570,7 +589,6 @@ class Ui_MainWindow(object):
         self.label_seek.setGeometry(QtCore.QRect(1031, 733, 55, 16))
         self.label_seek.setObjectName("label_seek")
         self.label_seek.setDisabled(True)
-
 
     def retranslateUi(self, MainWindow):
 
@@ -587,7 +605,7 @@ class Ui_MainWindow(object):
         self.toolButton_9.setText(_translate("MainWindow", "Favorites"))
         self.toolButton_13.setText(_translate("MainWindow", "Paste"))
         self.toolButton_ren.setText(_translate("MainWindow", "Rename"))
-
+        self.toolButton_extract.setText(_translate("MainWindow", "Extract"))
         self.tableWidget.setSortingEnabled(True)
 
         #        item = self.tableWidget.verticalHeaderItem(0)  # amodi
@@ -643,6 +661,12 @@ class Ui_MainWindow(object):
         self.msg.setText("You dont have permission to access this directory")
         self.msg.setWindowTitle("Something went wrong!")
         self.msg.setStandardButtons(QMessageBox.Ok)
+
+        self.msg_new = QMessageBox()
+        self.msg_new.setIcon(QMessageBox.Information)
+        self.msg_new.setText("The folder already exist")
+        self.msg_new.setWindowTitle("Something went wrong!")
+        self.msg_new.setStandardButtons(QMessageBox.Ok)
 
         self.msg_1 = QMessageBox()
         self.msg_1.setIcon(QMessageBox.Information)
@@ -773,8 +797,12 @@ class Ui_MainWindow(object):
         elif fileExtension == '.exe':
             os.startfile(self.opendirfile)
 
-        elif not os.path.isdir(self.opendirfile):
-            os.startfile(self.opendirfile)
+
+        elif not os.path.isdir(self.opendirfile) and fileExtension != '.zip':
+            try:
+                os.startfile(self.opendirfile)
+            except:
+                pass
 
         if os.path.isdir(self.opendirfile):
             # if fileExtension == '' or len(fileExtension) > 4 or len(fileExtension) == 2:
@@ -993,10 +1021,13 @@ class Ui_MainWindow(object):
     #    self.label_2.setPixmap(QtGui.QPixmap(self.imagepath))
 
     def showpic(self):
-
-        if self.tableWidget.currentItem().text().endswith(".jpg"):
-            self.pixmap = QtGui.QPixmap(self.comboBox_2.currentText()+"\\"+self.tableWidget.currentItem().text())
-            self.label_2.setPixmap(self.pixmap)
+        try:
+            if self.tableWidget.currentItem().text().endswith(".jpg"):
+                self.pixmap = QtGui.QPixmap(
+                    self.comboBox_2.currentText() + "\\" + self.tableWidget.currentItem().text())
+                self.label_2.setPixmap(self.pixmap)
+        except:
+            pass
 
     def setDisimage(self):
         self.label_2.setText("No image For preview")
@@ -1061,19 +1092,6 @@ class Ui_MainWindow(object):
             self.groupBox.setDisabled(True)
             self.label.setDisabled(True)
 
-    def Delete(self):
-        self.clickeditem_1 = self.tableWidget.currentItem()
-        if not self.clickeditem_1:
-            self.toolButton_3.setDisabled(True)
-        else:
-            self.toolButton_3.setDisabled(False)
-        self.deletepath = self.comboBox_2.currentText()
-        self.rootpath = self.comboBox_2.currentText()
-        try:
-            self.deletepath += self.clickeditem_1.text()
-        except:
-            pass
-
     def rename(self):
         self.clickeditem_ren = self.tableWidget.currentItem()
         if not self.clickeditem_ren:
@@ -1109,23 +1127,38 @@ class Ui_MainWindow(object):
 
         self.window_4.close()
         self.Refresh()
+
     def setDisrename(self):
         self.toolButton_ren.setDisabled(True)
+
+    def Delete(self):
+        self.clickeditem_1 = self.tableWidget.currentItem()
+        if not self.clickeditem_1:
+            self.toolButton_3.setDisabled(True)
+        else:
+            self.toolButton_3.setDisabled(False)
+        self.deletepath = self.comboBox_2.currentText()
+        self.rootpath = self.comboBox_2.currentText()
+        try:
+            self.deletepath += self.clickeditem_1.text()
+        except:
+            pass
 
     def DeleteItems(self):
         # delete file
         # file path is = self.deletepath
         if os.path.isdir(self.deletepath):
-            for i in os.listdir(self.deletepath):
-                try:
-                    os.remove(self.deletepath + '\\' + i)
-                except:
-                    pass
+            try:
+                shutil.rmtree(self.deletepath)
+            except:
+                pass
+
+        if os.path.isdir(self.deletepath):
             try:
                 os.removedirs(self.deletepath)
             except:
                 pass
-        print(self.deletepath)
+
         if not os.path.isdir(self.deletepath):
             try:
                 os.remove(self.deletepath)
@@ -1135,6 +1168,64 @@ class Ui_MainWindow(object):
 
     def setDisabledDelete(self):
         self.toolButton_3.setDisabled(True)
+
+    def setDisextract(self):
+        self.toolButton_extract.setDisabled(True)
+
+    def extract(self):
+        try:
+            self.clickeditem_extract = self.tableWidget.currentItem().text()
+        except:
+            pass
+        try:
+            if self.clickeditem_extract.endswith(".zip"):
+                self.toolButton_extract.setDisabled(False)
+            else:
+                self.toolButton_extract.setDisabled(True)
+        except:
+            pass
+        try:
+            self.extractpath = os.path.join(self.comboBox_2.currentText(), self.clickeditem_extract)
+        except:
+            pass
+
+    def extractitems(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.myzip = zipfile.ZipFile(self.extractpath)
+        self.havepass = False
+        for zinfo in self.myzip.infolist():
+            have_pass = zinfo.flag_bits & 0x1
+            if have_pass:
+                self.havepass = True
+            else:
+                self.havepass = False
+
+        self.window_extract = QtWidgets.QMainWindow()
+        self.ui_extract = otherwindows.Ui_OtherWindos()
+        self.ui_extract.setupUi(self.window_extract)
+        self.ui_extract.label.setText(_translate("OtherWindos", "Enter Password:"))
+        if have_pass:
+            self.window_extract.show()
+
+        self.ui_extract.pushButton.clicked.connect(self.Closewindowsext)
+        if not have_pass:
+            self.extractfile()
+
+    def Closewindowsext(self):
+        self.pwd = self.ui_extract.lineEdit.text()
+        try:
+            self.myzip.extractall(path=self.extractpath[:len(self.extractpath) - 4], pwd=self.pwd.encode('ascii'))
+        except:
+            pass
+        self.window_extract.close()
+        self.Refresh()
+
+    def extractfile(self):
+        try:
+            self.myzip.extractall(path=self.extractpath[:len(self.extractpath) - 4])
+        except:
+            pass
+        self.Refresh()
 
     def Copy(self):
         self.clickeditem_2 = self.tableWidget.currentItem()
@@ -1150,7 +1241,7 @@ class Ui_MainWindow(object):
         self.method = 'Copy'
         self.copyingfile = self.comboBox_2.currentText()
         try:
-            #self.copyingfile = self.copyingfile + "\\" + self.clickeditem_2.text()
+            # self.copyingfile = self.copyingfile + "\\" + self.clickeditem_2.text()
             self.copyingfile = os.path.join(self.copyingfile, self.clickeditem_2.text())
 
         except:
@@ -1243,7 +1334,7 @@ class Ui_MainWindow(object):
         try:
             os.mkdir(self.newdirname)
         except:
-            pass
+            self.msg_new.show()
         self.Refresh()
 
     def openwindows_2(self):
@@ -1611,6 +1702,10 @@ class Ui_MainWindow(object):
         except NotADirectoryError:
             self.msg_1.exec_()
             self.path = self.comboBox_2.currentText()
+        except FileNotFoundError:
+            self.msg_1.exec_()
+            self.path = self.comboBox_2.currentText()
+
         self.num = self.comboBox_2.currentIndex()
         self.comboBox_2.setItemText(self.num, self.path)
         self.lisrdir.sort()
