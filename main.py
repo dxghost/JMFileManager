@@ -27,6 +27,8 @@ from PyQt5.QtWidgets import QApplication, QFileSystemModel, QTreeView, QWidget, 
 from  PyQt5.QtCore import QDir, Qt
 import favourite
 import renamewindows
+import connection_win
+import download_win
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -232,6 +234,29 @@ class Ui_MainWindow(object):
         self.toolButton_13.setObjectName("toolButton_13")
         self.toolButton_13.setDisabled(True)
         # -----------
+        self.toolButton_conn = QtWidgets.QToolButton(self.Toolbox)
+        self.toolButton_conn.setGeometry(QtCore.QRect(740, 20, 71, 68))
+        self.toolButton_conn.setInputMethodHints(QtCore.Qt.ImhNone)
+        icon_link = QtGui.QIcon()
+        icon_link.addPixmap(QtGui.QPixmap("ui icons/Link-03.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.toolButton_conn.setIcon(icon_link)
+        self.toolButton_conn.setIconSize(QtCore.QSize(31, 31))
+        self.toolButton_conn.setPopupMode(QtWidgets.QToolButton.DelayedPopup)
+        self.toolButton_conn.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolButton_conn.setAutoRaise(True)
+        self.toolButton_conn.setObjectName("toolButton_14")
+        self.toolButton_download = QtWidgets.QToolButton(self.Toolbox)
+        self.toolButton_download.setGeometry(QtCore.QRect(810, 20, 71, 68))
+        self.toolButton_download.setInputMethodHints(QtCore.Qt.ImhNone)
+        icon_download = QtGui.QIcon()
+        icon_download.addPixmap(QtGui.QPixmap("ui icons/File-download-01.png"), QtGui.QIcon.Normal,
+                                QtGui.QIcon.Off)
+        self.toolButton_download.setIcon(icon_download)
+        self.toolButton_download.setIconSize(QtCore.QSize(45, 45))
+        self.toolButton_download.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolButton_download.setAutoRaise(True)
+        self.toolButton_download.setObjectName("toolButton_15")
+        self.toolButton_download.setDisabled(True)
         self.label = QtWidgets.QLabel(self.Toolbox)
         self.label.setGeometry(QtCore.QRect(1010, 20, 81, 71))
         self.label.setText("")
@@ -240,7 +265,7 @@ class Ui_MainWindow(object):
         self.label.setObjectName("label")
 
         self.comboBox_2 = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox_2.setGeometry(QtCore.QRect(280, 110, 791, 31))
+        self.comboBox_2.setGeometry(QtCore.QRect(280, 110, 751, 31))
         self.comboBox_2.setToolTipDuration(0)
         self.comboBox_2.setEditable(False)
         self.comboBox_2.setInsertPolicy(QtWidgets.QComboBox.InsertAlphabetically)
@@ -432,7 +457,7 @@ class Ui_MainWindow(object):
         self.toolButton_10.setAutoRaise(True)
         self.toolButton_10.setObjectName("toolButton_10")
         self.toolButton_12 = QtWidgets.QToolButton(self.centralwidget)
-        self.toolButton_12.setGeometry(QtCore.QRect(1080, 110, 31, 31))
+        self.toolButton_12.setGeometry(QtCore.QRect(1040, 110, 31, 31))
         self.toolButton_12.setText("")
         icon19 = QtGui.QIcon()
         icon19.addPixmap(QtGui.QPixmap("ui icons/a5d6aeadedbecb97856e1339f1cb2477.png"), QtGui.QIcon.Normal,
@@ -502,16 +527,7 @@ class Ui_MainWindow(object):
         self.toolButton_15.setToolButtonStyle(QtCore.Qt.ToolButtonFollowStyle)
         self.toolButton_15.setAutoRaise(True)
         self.toolButton_15.setObjectName("toolButton_15")
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(1121, 200, 471, 485))
-        self.label_2.setFrameShape(QtWidgets.QFrame.Box)
-        self.label_2.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.label_2.setTextFormat(QtCore.Qt.AutoText)
-        self.label_2.setScaledContents(True)
-        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_2.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
-        self.label_2.setObjectName("label_2")
-        self.label_2.setText(_translate("MainWindow", "No image For preview"))
+
         # self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         # self.textBrowser.setGeometry(QtCore.QRect(1150, 180, 101, 30))
         # palette = QtGui.QPalette()
@@ -529,6 +545,53 @@ class Ui_MainWindow(object):
         # self.textBrowser.setFrameShape(QtWidgets.QFrame.NoFrame)
         # self.textBrowser.setObjectName("textBrowser")
         # self.textBrowser.setText('Image Preview')
+
+        self.toolButton_16 = QtWidgets.QToolButton(self.centralwidget)
+        self.toolButton_16.setGeometry(QtCore.QRect(1080, 110, 31, 31))
+        self.toolButton_16.setText("")
+        icon_switch = QtGui.QIcon()
+        icon_switch.addPixmap(QtGui.QPixmap("ui icons/switch-256.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.toolButton_16.setIcon(icon_switch)
+        self.toolButton_16.setIconSize(QtCore.QSize(35, 35))
+        self.toolButton_16.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+        self.toolButton_16.setAutoRaise(True)
+        self.toolButton_16.setObjectName("toolButton_16")
+
+        self.listWidgetitems = []
+
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
+        self.listWidget.setGeometry(QtCore.QRect(1120, 10, 471, 381))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.listWidget.setFont(font)
+        self.listWidget.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.listWidget.setAutoFillBackground(False)
+        self.listWidget.setStyleSheet("New Item{color: blue}")
+        self.listWidget.setObjectName("listWidget")
+        item = QtWidgets.QListWidgetItem()
+        self.listWidgetitems.append(item)
+        item.setTextAlignment(QtCore.Qt.AlignCenter)
+        item.setFlags(QtCore.Qt.ItemIsEnabled)
+        self.listWidget.addItem(item)
+        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit.setGeometry(QtCore.QRect(1120, 404, 431, 31))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.lineEdit.setFont(font)
+        self.lineEdit.setObjectName("lineEdit")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(1554, 400, 41, 41))
+        self.pushButton.setText("")
+        icon_send = QtGui.QIcon()
+        icon_send.addPixmap(QtGui.QPixmap("ui icons/Paper-Plane-512.png"), QtGui.QIcon.Normal,
+                            QtGui.QIcon.Off)
+        self.pushButton.setIcon(icon_send)
+        self.pushButton.setIconSize(QtCore.QSize(30, 35))
+        self.pushButton.setAutoDefault(False)
+        self.pushButton.setDefault(False)
+        self.pushButton.setFlat(True)
+        self.pushButton.setObjectName("pushButton")
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.tableWidget.cellClicked.connect(self.Mediaplayer)
@@ -537,8 +600,8 @@ class Ui_MainWindow(object):
         self.tableWidget.cellClicked.connect(self.Cut)
         self.tableWidget.cellClicked.connect(self.Zip)
         self.tableWidget.cellClicked.connect(self.rename)
-        self.tableWidget.cellClicked.connect(self.showpic)
         self.tableWidget.cellClicked.connect(self.extract)
+        self.tableWidget.cellClicked.connect(self.download)
 
         # self.tableWidget.cellClicked.connect(self.Imagepreview)
 
@@ -548,8 +611,8 @@ class Ui_MainWindow(object):
         self.comboBox_2.currentIndexChanged.connect(self.setmediaPlayerDis)
         self.comboBox_2.currentIndexChanged.connect(self.setDisZip)
         self.comboBox_2.currentIndexChanged.connect(self.setDisrename)
-        self.comboBox_2.currentIndexChanged.connect(self.setDisimage)
         self.comboBox_2.currentIndexChanged.connect(self.setDisextract)
+        self.comboBox_2.currentIndexChanged.connect(self.setDisdownload)
 
         self.comboBox_2.currentTextChanged.connect(self.setDisabledDelete)
         self.comboBox_2.currentTextChanged.connect(self.setDisabledCopy)
@@ -557,8 +620,8 @@ class Ui_MainWindow(object):
         self.comboBox_2.currentTextChanged.connect(self.setmediaPlayerDis)
         self.comboBox_2.currentTextChanged.connect(self.setDisZip)
         self.comboBox_2.currentTextChanged.connect(self.setDisrename)
-        self.comboBox_2.currentTextChanged.connect(self.setDisimage)
         self.comboBox_2.currentTextChanged.connect(self.setDisextract)
+        self.comboBox_2.currentTextChanged.connect(self.setDisdownload)
 
         self.toolButton_3.clicked.connect(self.DeleteItems)
         self.toolButton_4.clicked.connect(self.CopyItems)
@@ -577,9 +640,11 @@ class Ui_MainWindow(object):
         self.toolButton_9.clicked.connect(self.favourite)
         self.toolButton_ren.clicked.connect(self.renameitems)
         self.toolButton_extract.clicked.connect(self.extractitems)
+        self.toolButton_conn.clicked.connect(self.Openconnectionwindows)
+        self.toolButton_download.clicked.connect(self.opendownloadwindow)
+        self.pushButton.clicked.connect(self.sendmessege)
 
         self.label = QtWidgets.QLabel(self.centralwidget)
-
         self.label_allDuuration = QtWidgets.QLabel(self.centralwidget)
         self.label_allDuuration.setGeometry(QtCore.QRect(1078, 733, 55, 16))
         self.label_allDuuration.setObjectName("label_duration")
@@ -606,7 +671,18 @@ class Ui_MainWindow(object):
         self.toolButton_13.setText(_translate("MainWindow", "Paste"))
         self.toolButton_ren.setText(_translate("MainWindow", "Rename"))
         self.toolButton_extract.setText(_translate("MainWindow", "Extract"))
+        self.toolButton_download.setText(_translate("MainWindow", "Download"))
+        self.toolButton_conn.setText(_translate("MainWindow", "Make\n""Connection"))
         self.tableWidget.setSortingEnabled(True)
+        __sortingEnabled = self.listWidget.isSortingEnabled()
+        self.listWidget.setSortingEnabled(False)
+        self.listWidget.setSortingEnabled(__sortingEnabled)
+        __sortingEnabled = self.listWidget.isSortingEnabled()
+        self.listWidget.setSortingEnabled(False)
+        item = self.listWidget.item(0)
+        item.setText(_translate("MainWindow", "Send your message to another device"))
+        self.listWidget.setSortingEnabled(__sortingEnabled)
+        self.lineEdit.setPlaceholderText(_translate("MainWindow", "Enter your messege"))
 
         #        item = self.tableWidget.verticalHeaderItem(0)  # amodi
         #        item.setText(_translate("MainWindow", "1"))
@@ -796,7 +872,6 @@ class Ui_MainWindow(object):
 
         elif fileExtension == '.exe':
             os.startfile(self.opendirfile)
-
 
         elif not os.path.isdir(self.opendirfile) and fileExtension != '.zip':
             try:
@@ -1020,17 +1095,6 @@ class Ui_MainWindow(object):
     #    self.label_2.setScaledContents(True)
     #    self.label_2.setPixmap(QtGui.QPixmap(self.imagepath))
 
-    def showpic(self):
-        try:
-            if self.tableWidget.currentItem().text().endswith(".jpg"):
-                self.pixmap = QtGui.QPixmap(
-                    self.comboBox_2.currentText() + "\\" + self.tableWidget.currentItem().text())
-                self.label_2.setPixmap(self.pixmap)
-        except:
-            pass
-
-    def setDisimage(self):
-        self.label_2.setText("No image For preview")
 
     def Mediaplayer(self):
         self.clickeditem = self.tableWidget.currentItem()
@@ -1314,6 +1378,48 @@ class Ui_MainWindow(object):
 
     def setDisZip(self):
         self.toolButton_6.setDisabled(True)
+
+    def Openconnectionwindows(self):
+        self.connection_window = QtWidgets.QMainWindow()
+        self.ui_connection_window = connection_win.Ui_MainWindow()
+        self.ui_connection_window.setupUi(self.connection_window)
+        self.connection_window.show()
+        self.ui_connection_window.pushButton_2.clicked.connect(self.closeconnectionwindows)
+        self.ui_connection_window.pushButton.clicked.connect(self.runserver)
+        self.ui_connection_window.pushButton_3.clicked.connect(self.closeconnectionwindows)
+        self.ui_connection_window.pushButton_4.clicked.connect(self.runclient)
+
+    def closeconnectionwindows(self):
+        self.connection_window.close()
+
+    def runserver(self):
+        self.connection_window.close()
+
+    def runclient(self):
+        self.connection_window.close()
+
+    def download(self):
+        try:
+            self.dlfilepath = os.path.join(self.comboBox_2.currentText(), self.tableWidget.currentItem().text())
+        except:
+            return None
+        if not os.path.isdir(self.dlfilepath):
+            self.toolButton_download.setDisabled(False)
+        else:
+            self.toolButton_download.setDisabled(True)
+
+    def setDisdownload(self):
+        self.toolButton_download.setDisabled(True)
+
+    def opendownloadwindow(self):
+        self.download_windows = QtWidgets.QMainWindow()
+        self.ui_download_windows = download_win.Ui_MainWindow()
+        self.ui_download_windows.setupUi(self.download_windows)
+        self.itempath = os.path.join(self.comboBox_2.currentText(), self.tableWidget.currentItem().text())
+        self.st = file_size(self.itempath)
+        self.ui_download_windows.label_6.setText(self.itempath)
+        self.ui_download_windows.label_8.setText(str(self.st))
+        self.download_windows.show()
 
     def openWindow(self):
         self.window = QtWidgets.QMainWindow()
@@ -1804,9 +1910,75 @@ class Ui_MainWindow(object):
     def Closewindows_3(self):
         self.window_3.close()
 
+    def sendmessege(self):
+        self.message = self.lineEdit.text()
+        self.message = "Client : " + self.message
+        item = QtWidgets.QListWidgetItem()
+        icon_client = QtGui.QIcon()
+        icon_client.addPixmap(QtGui.QPixmap("ui icons/78373.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        item.setIcon(icon_client)
+        self.listWidget.addItem(item)
+        item.setText(self.message)
+        self.lineEdit.clear()
+        self.recivemsg()
+
+    def recivemsg(self):
+        self.recmessage = ''
+        self.recmessage = "Server : " + self.recmessage
+        item = QtWidgets.QListWidgetItem()
+        icon_server = QtGui.QIcon()
+        icon_server.addPixmap(QtGui.QPixmap("ui icons/7837543 (1).png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        item.setIcon(icon_server)
+        self.listWidget.addItem(item)
+        item.setText(self.recmessage)
+        '''
+        item = QtWidgets.QListWidgetItem()
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap("ui icons/78373.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        item.setIcon(icon5)
+        self.listWidget.addItem(item)
+        item = self.listWidget.item(1)
+        item.setText(_translate("MainWindow", "Client : "))
+        item = self.listWidget.item(2)
+        item.setText(_translate("MainWindow", "Server:"))
+        item = QtWidgets.QListWidgetItem()
+        self.listWidgetitems.append(item)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap("ui icons/78373.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        item.setIcon(icon5)
+        self.listWidget.addItem(item)
+        item = QtWidgets.QListWidgetItem()
+        self.listWidgetitems.append(item)
+        item.setTextAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignVCenter)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap("ui icons/7837543 (1).png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        item.setIcon(icon6)
+        self.listWidget.addItem(item)
+        '''
+
 
 if __name__ == "__main__":
     import sys
+
+
+    def file_size(file_path):
+        """
+        this function will return the file size
+        """
+        if os.path.isfile(file_path):
+            file_info = os.stat(file_path)
+            return convert_bytes(file_info.st_size)
+
+
+    def convert_bytes(num):
+        """
+        this function will convert bytes to MB.... GB... etc
+        """
+        for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+            if num < 1024.0:
+                return "%3.1f %s" % (num, x)
+            num /= 1024.0
+
 
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
