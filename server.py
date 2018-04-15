@@ -6,26 +6,36 @@ import psutil
 import shutil
 
 
+
 class server:
-    def __init__(self, commandPort, transferPort, host):
+    def __init__(self):
         self.commandSock = socket.socket()
-        self.commandPort = commandPort
+        self.commandPort = 8080
         self.transferSock = socket.socket()
-        self.transferPort = transferPort
-        self.host = host
+        self.transferPort = 8088
+        self.chatSock=socket.socket()
+        self.chatPort=8085
+        self.host = ''
         self.bindsocket()
 
     def bindsocket(self):
         self.commandSock.bind((self.host, self.commandPort))
         self.transferSock.bind((self.host, self.transferPort))
+        self.chatSock.bind((self.host,self.chatPort))
         self.commandSock.listen(10)
         self.transferSock.listen(10)
+        self.chatSock.listen(10)
+
         self.filename = ""
         print ("Waiting for a connection.....")
         self.clientTransferSock, self.transferAddr = self.transferSock.accept()
         self.clientCommandSock, self.commandAddr = self.commandSock.accept()
+        self.clientChatSock , self.chatAddr = self.chatSock.accept()
+
         print("Got a transfer connection from %s" % str(self.transferAddr))
         print("Got a command connection from %s" % str(self.commandAddr))
+        print("Got a chat connection from %s" % str(self.chatAddr))
+
         self.sendPartitions()
         self.clientCommandSock.send(('Partitions Sent').encode('utf-8'))
         print('Partitions Sent!')
@@ -33,10 +43,12 @@ class server:
     def closeServer(self):
         self.clientCommandSock.close()
         self.clientTransferSock.close()
+        self.clientChatSock.close()
 
     def dicision(self):
         while True:
             self.message = (self.clientCommandSock.recv(32)).decode('utf-8')
+            #(self.message)
             if self.message == 'Delete Request':
                 self.clientCommandSock.send('Delete Request Received'.encode('utf-8'))
                 self.delete()
@@ -49,9 +61,29 @@ class server:
             elif self.message == 'Listdir Request':
                 self.clientCommandSock.send('Listdir Request Received'.encode('utf-8'))
                 self.listdir()
+            elif self.message == 'Chat Request':
+                self.clientCommandSock.send('Chat Request Received'.encode('utf-8'))
+                self.chat()
             elif self.message == 'Mkdir Request':
                 self.clientCommandSock.send('Mkdir Request Received'.encode('utf-8'))
                 self.mkdir()
+
+    def chat(self):
+        self.chatfile=open('chatfile.txt','w')
+        self.message = self.clientChatSock.recv(128).decode('utf-8')
+        self.chatfile.write(self.message+'\n')
+        self.chatfile.close()
+        print(self.message)
+
+    def mkdir(self):
+        self.mkdirPath = self.clientCommandSock.recv(128).decode('utf-8')
+        try:
+            os.mkdir(self.mkdirPath)
+            self.clientCommandSock.send('Directory Made'.encode('utf-8'))
+            print ('Directory Made Successfully!')
+        except:
+            self.clientCommandSock.send('Directory Already Exist'.encode('utf-8'))
+            print ('Directory Already Exist')
 
     def send(self, directory):
         print(directory)
@@ -119,7 +151,7 @@ class server:
     def sendFile(self):
         self.sendFileDirectory = self.clientCommandSock.recv(128).decode('utf-8')
         self.clientCommandSock.send('File Directory Received'.encode('utf-8'))
-        threading.Thread(target=self.send, args=('C:\\Users\\moham\\Downloads\\Video\\Fereshteha_Ba_Ham_Miayand_HD_(Doostiha.NET)_2.mkv',)).start()
+        threading.Thread(target=self.send, args=(self.sendFileDirectory,)).start()
 
     def sendPartitions(self):
         self.dps_defualt = psutil.disk_partitions()
@@ -129,6 +161,7 @@ class server:
         self.clientCommandSock.send((str(self.dps)).encode('utf-8'))
 
     def listdir(self):
+
         self.listdirPath = self.clientCommandSock.recv(128).decode('utf-8')
         self.clientCommandSock.send('Listdir Path Received'.encode('utf-8'))
         self.clientCommandSock.send(str(len(str(os.listdir(self.listdirPath)))).encode('utf-8'))
@@ -144,16 +177,9 @@ class server:
         else:
             print('Listdir Delivered!')
 
-    def mkdir(self):
-        self.mkdirPath = self.clientCommandSock.recv(128).decode('utf-8')
-        try:
-            os.mkdir(self.mkdirPath)
-            self.clientCommandSock.send('Directory Made'.encode('utf-8'))
-            print ('Directory Made Successfully!')
-        except:
-            self.clientCommandSock.send('Directory Already Exist'.encode('utf-8'))
-            print ('Directory Already Exist')
+
 
 if __name__ == '__main__':
-    myServer = server(8000, 9000, socket.gethostname())
+    myServer = server()
     threading.Thread(target=myServer.dicision()).start()
+

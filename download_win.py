@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -44,20 +45,23 @@ class Ui_MainWindow(object):
         self.label_8.setGeometry(QtCore.QRect(130, 90, 91, 16))
         self.label_8.setObjectName("label_8")
         self.tabWidget.addTab(self.tab_2, "")
-        self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
+        self.progressBar = QtGui.QProgressBar(self.centralwidget)
         self.progressBar.setGeometry(QtCore.QRect(10, 170, 599, 23))
         self.progressBar.setMaximum(100)
-        self.progressBar.setProperty("value", 19)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
         self.progressBar.setTextVisible(True)
         self.progressBar.setOrientation(QtCore.Qt.Horizontal)
         self.progressBar.setInvertedAppearance(False)
         self.progressBar.setObjectName("progressBar")
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
+        self.threadclass = ThreadClass()
+        self.threadclass.start()
+        self.connect(self.threadclass, QtCore.QSignalBlocker)
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Progress bar"))
@@ -70,6 +74,23 @@ class Ui_MainWindow(object):
         self.label_7.setText(_translate("MainWindow", "Document"))
         self.label_8.setText(_translate("MainWindow", "25.46 MB"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "File transfer status"))
+
+
+    def download(self):
+        self.counter = 0
+        while True:
+            ui.counter += 1
+            ui.progressBar.setProperty("value", ui.counter)
+            time.sleep(1)
+
+class ThreadClass(QtCore.QThread):
+    def __init__(self, parent = None):
+        super(ThreadClass, self).__init__(parent)
+
+    def run(self):
+        while 1:
+            val = 2
+            self.emit(QtCore.QSignalTransition)
 
 
 if __name__ == "__main__":
