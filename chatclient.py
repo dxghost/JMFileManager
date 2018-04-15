@@ -32,12 +32,15 @@ class Window(QDialog):
         super().__init__()
         self.flag = 0
         self.chatTextField = QLineEdit(self)
-        self.chatTextField.resize(500, 100)
+
+        self.chatTextField.resize(480, 100)
+        self.chatTextField.resize(600, 100)
         self.chatTextField.setMaximumHeight(100)
-        self.chatTextField.setMaximumWidth(500)
+        self.chatTextField.setMaximumWidth(600)
         self.chatTextField.setMinimumHeight(100)
-        self.chatTextField.setMinimumWidth(500)
+        self.chatTextField.setMinimumWidth(600)
         self.chatTextField.move(10, 350)
+
         self.btnSend = QPushButton("Send", self)
         self.btnSend.resize(480, 30)
         self.btnSendFont = self.btnSend.font()
@@ -187,7 +190,7 @@ class ClientThread1(Thread):
     def run(self):
         self.file = open("ip.txt", 'r')
         self.ip = self.file.readlines()
-        self.ip='localhost'
+
         print(self.ip[0])
         host = self.ip[0]
         port = 80
