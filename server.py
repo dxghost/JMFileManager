@@ -49,6 +49,9 @@ class server:
             elif self.message == 'Listdir Request':
                 self.clientCommandSock.send('Listdir Request Received'.encode('utf-8'))
                 self.listdir()
+            elif self.message == 'Mkdir Request':
+                self.clientCommandSock.send('Mkdir Request Received'.encode('utf-8'))
+                self.mkdir()
 
     def send(self, directory):
         print(directory)
@@ -140,6 +143,16 @@ class server:
             time.sleep(1)
         else:
             print('Listdir Delivered!')
+
+    def mkdir(self):
+        self.mkdirPath = self.clientCommandSock.recv(128).decode('utf-8')
+        try:
+            os.mkdir(self.mkdirPath)
+            self.clientCommandSock.send('Directory Made'.encode('utf-8'))
+            print ('Directory Made Successfully!')
+        except:
+            self.clientCommandSock.send('Directory Already Exist'.encode('utf-8'))
+            print ('Directory Already Exist')
 
 if __name__ == '__main__':
     myServer = server(8000, 9000, socket.gethostname())

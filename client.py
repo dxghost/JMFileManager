@@ -137,6 +137,24 @@ class client:
         print(self.listdir)
         return self.listdir
 
+    def mkdirRequest(self, path):
+        self.commandSock.send(('Mkdir Request').encode('utf-8'))
+        while (self.commandSock.recv(32)).decode('utf-8') != 'Mkdir Request Received':
+            print('Waiting for Mkdir Request to deliver...')
+            time.sleep(1)
+        else:
+            print('Mkdir Request Delivered!')
+        self.commandSock.send((path).encode('utf-8'))
+        self.mkdirStatus = (self.commandSock.recv(32)).decode('utf-8')
+        while (self.mkdirStatus != 'Directory Made' and self.mkdirStatus != 'Directory Already Exist'):
+            print('Waiting for Making Status...')
+            time.sleep(1)
+        else:
+            if self.mkdirStatus == 'Directory Made':
+                print('Directory Made Successfully!')
+            elif self.mkdirStatus == 'Directory Already Exist':
+                print('Directory Already Exist!')
+
     def closeSocket(self):
         self.commandSock.close()
         self.transferSock.close()
@@ -149,4 +167,5 @@ if __name__ == '__main__':
     myClient.deleteRequest('C:\\Users\\moham\\Desktop\\12271.jpg')
     myClient.copyRequest('D:\\Pictures\\Baby Wallpapers\\4K\\325.jpg', 'C:\\Users\\moham\\Desktop\\')
     myClient.listdirRequest('D:\\Music\\100 billboard')
+    myClient.mkdirRequest('C:\\Users\\moham\\Desktop\\x')
     # myClient.closeSocket()
